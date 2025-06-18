@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教育資料トップページ - 目次</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px 15px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* レスポンシブ対応 */
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .card h2 {
+            color: #34495e;
+            font-size: 1.6em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        .card ul li {
+            margin-bottom: 10px;
+        }
+        .card ul li a {
+            text-decoration: none;
+            color: #2980b9;
+            font-size: 1.05em;
+            display: block;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+        .card ul li a:hover {
+            color: #1f618d;
+            text-decoration: underline;
+        }
+        .card .description {
+            font-size: 0.85em;
+            color: #777;
+            margin-top: 3px;
+            margin-left: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>教育資料 目次</h1>
+
+        <div class="section-grid">
+            <!-- <div class="card">
+                <h2>はじめに</h2>
+                <ul>
+                    <li><a href="intro/01_overview.html">Webサイトの概要</a><span class="description">このWebサイトで学べることの全体像です。</span></li>
+                    <li><a href="intro/02_how_to_use.html">利用ガイド</a><span class="description">Webサイトの使い方や注意事項について説明します。</span></li>
+                </ul>
+            </div> -->
+
+            <div class="card">
+                <h2>C#</h2>
+                <ul>
+                    <li><a href="CSharp/program01.html">プログラミングの基礎を学ぼう！（C#版）</a><span class="description">C#を基本としたプログラム入門</span></li>
+                    <li><a href="CSharp/program02.html">ステップアップのための概念</a><span class="description">大規模なアプリケーション開発に必要な応用概念</span></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
