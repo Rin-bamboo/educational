@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C#で始めるWebアプリケーション開発：ASP.NET Core</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff; /* Primary blue */
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #28a745; /* Success green */
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            color: #17a2b8; /* Info cyan */
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        code {
+            background-color: #e0f2f7; /* Light blue for inline code */
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #c7254e;
+        }
+        pre {
+            background-color: #f0f8ff; /* AliceBlue for code blocks */
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 15px;
+            border: 1px solid #cce5ff;
+        }
+        .note {
+            background-color: #d1ecf1; /* Light cyan */
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #0c5460;
+        }
+        .warning {
+            background-color: #fff3cd; /* Light yellow */
+            border-left: 5px solid #ffc107; /* Orange-yellow */
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #664d03;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>C#で始めるWebアプリケーション開発：ASP.NET Core</h1>
+        <p>C#の基本を学んだ次は、Webの世界に飛び込んでみましょう！ <strong>ASP.NET Core</strong>は、Microsoftが提供するモダンで高性能なWebアプリケーション開発フレームワークです。Webサイト、Web API、マイクロサービスなど、様々なWebアプリケーションをC#で開発できます。</p>
+
+        <section>
+            <h2>1. Webアプリケーションとは？</h2>
+            <p><strong>Webアプリケーション</strong>は、Webブラウザを通じてアクセス・利用されるアプリケーションのことです。皆さんが普段見ているウェブサイトの多くは、裏側でWebアプリケーションが動いています。</p>
+            <h3>基本的な仕組み</h3>
+            <ol>
+                <li><strong>クライアント（Webブラウザ）:</strong> ユーザーが操作する部分。HTML, CSS, JavaScriptで表示され、Webサーバーにリクエストを送ります。</li>
+                <li><strong>Webサーバー:</strong> クライアントからのリクエストを受け付け、処理し、結果（HTMLなど）を返すコンピューター。</li>
+                <li><strong>データベース:</strong> データを保存・管理する場所。Webアプリケーションは、データベースからデータを取得したり、保存したりします。</li>
+            </ol>
+            <p>Webアプリケーションは、クライアントとサーバーが通信し合うことで機能します。ASP.NET Coreは、主にこの「Webサーバー」側（サーバーサイド）の処理をC#で記述するためのフレームワークです。</p>
+        </section>
+
+        <section>
+            <h2>2. ASP.NET Coreとは？</h2>
+            <p><strong>ASP.NET Core</strong>は、従来のASP.NET (.NET Framework) を大幅に刷新した、最新のWeb開発フレームワークです。</p>
+            <h3>特徴</h3>
+            <ul>
+                <li><strong>クロスプラットフォーム:</strong> Windowsだけでなく、macOSやLinux上でも開発・実行できます。</li>
+                <li><strong>オープンソース:</strong> コードが公開されており、コミュニティによって活発に開発が進められています。</li>
+                <li><strong>高性能:</strong> 他の主要なWebフレームワークと比較しても高いパフォーマンスを発揮します。</li>
+                <li><strong>モジュール化:</strong> 必要な機能だけを組み込むことができるため、軽量で柔軟なアプリケーションを構築できます。</li>
+                <li><strong>モダンなアーキテクチャ:</strong> 依存性の注入（Dependency Injection）、ミドルウェア、最小APIなど、モダンなWeb開発の概念を取り入れています。</li>
+                <li><strong>統一されたフレームワーク:</strong> Web UI (MVC/Razor Pages)、Web API、Blazorなど、様々な種類のWebアプリケーションを同じ基盤で開発できます。</li>
+            </ul>
+            <div class="note">
+                <p>ASP.NET Coreは、新しいWebアプリケーション開発の<strong>デファクトスタンダード</strong>として広く採用されています。これからC#でWeb開発を始めるなら、ASP.NET Coreを学ぶのが最適です。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. ASP.NET Coreの主要な開発モデル</h2>
+            <p>ASP.NET Coreには、開発するWebアプリケーションの種類に応じていくつかのモデルがあります。ここでは代表的な2つを紹介します。</p>
+
+            <h3>3.1. ASP.NET Core MVC / Razor Pages</h3>
+            <p>主にWebサイトやWebアプリケーションのユーザーインターフェース（UI）を構築するためのモデルです。</p>
+            <ul>
+                <li><strong>MVC (Model-View-Controller):</strong> Webアプリケーションのロジックを<strong>Model（データとビジネスロジック）</strong>、<strong>View（ユーザーインターフェース）</strong>、<strong>Controller（リクエストの処理）</strong>の3つの役割に分離するアーキテクチャパターンです。これにより、コードの見通しが良くなり、開発がしやすくなります。</li>
+                <li><strong>Razor Pages:</strong> よりページ中心のアプローチで、MVCよりも簡単にWebページを作成できます。小規模なWebサイトやCRUD（作成、読み取り、更新、削除）操作が多いアプリケーションに適しています。</li>
+                <li><strong>Razor構文:</strong> HTMLの中にC#コードを埋め込むための構文で、UIとサーバーサイドのロジックを統合して記述できます。</li>
+            </ul>
+
+            <h3>3.2. ASP.NET Core Web API</h3>
+            <p>Webサイトのユーザーインターフェースを持たず、データを提供するAPI（Application Programming Interface）を構築するためのモデルです。モバイルアプリや他のWebサービスなど、様々なクライアントからデータを取得・更新する際に利用されます。</p>
+            <ul>
+                <li><strong>RESTful API:</strong> Web APIの一般的な設計原則に従い、HTTPメソッド（GET, POST, PUT, DELETE）を使ってリソース（データ）を操作します。</li>
+                <li>主にJSON形式でデータをやり取りします。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. ASP.NET Core Webアプリケーション開発の基本ステップ (MVC/Razor Pagesの例)</h2>
+            <p>Visual Studioを使って簡単なWebアプリケーションを作成する手順を見ていきましょう。</p>
+
+            <h3>4.1. プロジェクトの作成</h3>
+            <ol>
+                <li>Visual Studioを開き、「新しいプロジェクトの作成」を選択します。</li>
+                <li>検索ボックスに「ASP.NET Core Web アプリ」と入力し、C#言語のテンプレートを選択して「次へ」をクリックします。</li>
+                <li>プロジェクト名（例: <code>MyWebApp</code>）と場所を指定し、「次へ」をクリックします。</li>
+                <li>「追加情報」画面で、以下の設定を選択します。
+                    <ul>
+                        <li><strong>フレームワーク:</strong> 最新の.NET (例: .NET 8.0) を選択</li>
+                        <li><strong>認証の種類:</strong> 「なし」を選択（最初はシンプルに）</li>
+                        <li><strong>Web アプリケーション モデル:</strong> <strong>「Razor Pages」</strong>または<strong>「Model-View-Controller (MVC)」</strong>を選択（ここではRazor Pagesがおすすめです）</li>
+                        <li><strong>HTTPS の構成:</strong> チェックを外しても良いですが、セキュリティのためにはチェックを推奨します。</li>
+                    </ul>
+                </li>
+                <li>「作成」をクリックします。</li>
+            </ol>
+            <p>プロジェクトが作成されると、基本的なWebサイトの構造が生成されます。</p>
+            <ul>
+                <li><code>Pages</code> (Razor Pagesの場合) / <code>Views</code>, <code>Controllers</code>, <code>Models</code> (MVCの場合): Webページの構成要素です。</li>
+                <li><code>Program.cs</code>: アプリケーションの起動と初期設定を行うファイルです。</li>
+                <li><code>appsettings.json</code>: アプリケーションの設定ファイルです。</li>
+                <li><code>wwwroot</code>: 静的なファイル（CSS, JavaScript, 画像など）を置く場所です。</li>
+            </ul>
+
+            <h3>4.2. Webページの作成と表示 (Razor Pagesの例)</h3>
+            <p>Razor Pagesでは、<code>.cshtml</code>ファイル（UI）と<code>.cshtml.cs</code>ファイル（コードビハインド）のペアでページを構成します。</p>
+            <ol>
+                <li>ソリューションエクスプローラーの<code>Pages</code>フォルダを右クリックし、「追加」>「Razor Page...」を選択します。</li>
+                <li>「空」テンプレートを選択し、ファイル名（例: <code>Greeting.cshtml</code>）を指定して「追加」をクリックします。</li>
+            </ol>
+            <p><code>Greeting.cshtml</code>にはHTMLとRazor構文を、<code>Greeting.cshtml.cs</code>にはC#コードを記述します。</p>
+
+            <pre><code class="language-html">&lt;!-- Pages/Greeting.cshtml --&gt;
+@page
+@model MyWebApp.Pages.GreetingModel
+@{
+    ViewData["Title"] = "ご挨拶ページ";
+}
+
+&lt;h1&gt;@ViewData["Title"]&lt;/h1&gt;
+
+&lt;p&gt;あなたの名前を入力してください:&lt;/p&gt;
+
+&lt;form method="post"&gt;
+    &lt;input type="text" asp-for="Name" /&gt;
+    &lt;button type="submit"&gt;送信&lt;/button&gt;
+&lt;/form&gt;
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    &lt;h2&gt;@Model.Message&lt;/h2&gt;
+}
+            </code></pre>
+            <pre><code class="language-csharp">// Pages/Greeting.cshtml.cs
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace MyWebApp.Pages
+{
+    public class GreetingModel : PageModel
+    {
+        // ユーザーから入力された名前を保持するプロパティ
+        [BindProperty] // このプロパティにフォームの値をバインドする
+        public string Name { get; set; }
+
+        // 表示するメッセージを保持するプロパティ
+        public string Message { get; set; }
+
+        // GETリクエスト（ページが最初に表示されるとき）
+        public void OnGet()
+        {
+            // 初回表示時の処理（ここでは何もしない）
+        }
+
+        // POSTリクエスト（フォームが送信されたとき）
+        public void OnPost()
+        {
+            if (string.IsNullOrEmpty(Name))
+            {
+                Message = "名前を入力してください！";
+            }
+            else
+            {
+                Message = $"こんにちは、{Name}さん！";
+            }
+        }
+    }
+}
+            </code></pre>
+            <ul>
+                <li><strong><code>@page</code>:</strong> このファイルがRazor Pageであることを示し、URLでアクセス可能にします。</li>
+                <li><strong><code>@model MyWebApp.Pages.GreetingModel</code>:</strong> このページで使用するC#のモデルクラスを指定します。</li>
+                <li><strong><code>@{ ... }</code>:</strong> C#のコードブロックを記述します。</li>
+                <li><strong><code>&lt;form method="post"&gt;</code>:</strong> フォームを定義し、データ送信方法をPOSTに指定します。</li>
+                <li><strong><code>asp-for="Name"</code>:</strong> ASP.NET Coreのタグヘルパーで、フォーム要素とモデルのプロパティをバインドします。</li>
+                <li><strong><code>OnGet()</code>:</strong> ブラウザがページを初めてリクエストしたときに実行されるメソッドです。</li>
+                <li><strong><code>OnPost()</code>:</strong> フォームが送信されたときに実行されるメソッドです。</li>
+                <li><strong><code>[BindProperty]</code>:</strong> HTTPリクエストからこのプロパティにデータを自動的にバインドするよう指示します。</li>
+            </ul>
+
+            <h3>4.3. アプリケーションの実行</h3>
+            <p>Visual Studioのツールバーにある「デバッグ開始」（緑色の再生ボタン）をクリックするか、<code>F5</code>キーを押すと、Webアプリケーションが起動し、ブラウザで表示されます。</p>
+            <p>URLの最後に<code>/Greeting</code>を追加して、作成したページにアクセスしてみてください。</p>
+            <p><code>https://localhost:ポート番号/Greeting</code></p>
+        </section>
+
+        <section>
+            <h2>5. 次のステップへ</h2>
+            <p>ASP.NET Coreの基本的なWebアプリケーション開発の入り口に触れました。このフレームワークは非常に多機能であり、さらに学ぶべきことがたくさんあります。</p>
+            <ul>
+                <li><strong>データベースとの連携:</strong> Entity Framework Core (EF Core) を使ってデータベースからデータを取得・保存する方法を学びましょう。</li>
+                <li><strong>認証と認可:</strong> ユーザーログイン機能や、特定のユーザーだけがアクセスできるページを作る方法を学びましょう。</li>
+                <li><strong>フォームの検証:</strong> ユーザー入力のバリデーション（正しい形式かどうかのチェック）を実装しましょう。</li>
+                <li><strong>Web APIの開発:</strong> JSONデータを返すWeb APIを作成する方法を学び、他のアプリケーションとの連携を試しましょう。</li>
+                <li><strong>フロントエンド技術との連携:</strong> Razor Pages/MVCとJavaScriptフレームワーク（React, Angular, Vue.jsなど）を組み合わせて、よりインタラクティブなUIを構築する方法を学びましょう。</li>
+                <li><strong>Blazor:</strong> C#だけでクライアントサイドWeb開発ができるBlazorにも挑戦してみましょう。</li>
+                <li><strong>デプロイ:</strong> 作成したWebアプリを実際のWebサーバー（IIS, Azure App Service, Dockerなど）に公開する方法を学びましょう。</li>
+            </ul>
+            <div class="note">
+                <p>Webアプリケーション開発は、日々進化する技術のスピードが速い分野です。しかし、C#とASP.NET Coreの堅牢な基盤があれば、様々なWebサービスを作り出すことが可能です。ぜひ、自分のアイデアをWebの世界で形にしてみてください。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>参考資料</h2>
+            <ul>
+                <li><a href="https://learn.microsoft.com/ja-jp/aspnet/core/" target="_blank">Microsoft Learn: ASP.NET Core の概要</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/aspnet/core/tutorials/razor-pages/" target="_blank">Microsoft Learn: Razor Pages の概要</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/aspnet/core/tutorials/first-web-api" target="_blank">Microsoft Learn: Web API の概要</a></li>
+                <li>Visual Studio ドキュメント</li>
+                <li>C#によるWebアプリケーション開発に関する書籍やオンラインチュートリアル</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p style="text-align: center; font-size: 0.85em; color: #6c757d; margin-top: 40px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                作成日: 2025年6月12日
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

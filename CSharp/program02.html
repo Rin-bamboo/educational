@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C# プログラミング応用：ステップアップのための概念</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff; /* Bootstrap primary blue */
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #28a745; /* Bootstrap success green */
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            color: #17a2b8; /* Bootstrap info cyan */
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        code {
+            background-color: #e0f2f7; /* Light blue background for inline code */
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #c7254e;
+        }
+        pre {
+            background-color: #f0f8ff; /* AliceBlue for code blocks */
+            padding: 18px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 15px;
+            border: 1px solid #cce5ff;
+        }
+        .note {
+            background-color: #d1ecf1; /* Light cyan */
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #0c5460;
+        }
+        .warning {
+            background-color: #fff3cd; /* Light yellow */
+            border-left: 5px solid #ffc107; /* Orange-yellow */
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #664d03;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>C# プログラミング応用：ステップアップのための概念</h1>
+        <p>「プログラム入門」の資料でC#の基本的な書き方を学んだ皆さん、お疲れ様でした！ ここからは、より複雑な処理を効率的に記述し、大規模なアプリケーションを開発するために不可欠なC#の応用概念を学んでいきましょう。</p>
+
+        <section>
+            <h2>1. メソッド（関数）: 処理の再利用</h2>
+            <p><strong>メソッド（Method）</strong>は、特定の処理のまとまりに名前を付けて定義するものです。これにより、同じ処理をプログラムのあちこちで何度も書く必要がなくなり、コードの重複を防ぎ、読みやすく、管理しやすくなります。</p>
+            <h3>なぜメソッドを使うのか？</h3>
+            <ul>
+                <li><strong>再利用性:</strong> 一度書いたコードを何度も使い回せます。</li>
+                <li><strong>可読性:</strong> 処理のまとまりに名前が付くことで、コードが何をしているのか理解しやすくなります。</li>
+                <li><strong>保守性:</strong> 処理を変更する場合、メソッドの中身を修正するだけで、そのメソッドを使っている全ての場所に変更が反映されます。</li>
+            </ul>
+            <h3>メソッドの基本構造</h3>
+            <p>メソッドは、**戻り値の型、メソッド名、引数**から構成されます。</p>
+            <pre><code class="language-csharp">using System;
+
+// メソッドを定義するクラス
+public class Program
+{
+    // プログラムのエントリーポイント（開始地点）
+    public static void Main(string[] args)
+    {
+        // メソッドの呼び出し例
+        Greet("太郎"); // 引数 "太郎" を渡してGreetメソッドを呼び出す
+
+        int result = Add(10, 5); // Addメソッドを呼び出し、戻り値をresultに格納
+        Console.WriteLine($"10 + 5 = {result}"); // 結果を表示
+    }
+
+    // 戻り値なし、引数ありのメソッド
+    public static void Greet(string name)
+    {
+        Console.WriteLine($"こんにちは、{name}さん！");
+    }
+
+    // 戻り値あり、引数ありのメソッド
+    public static int Add(int num1, int num2)
+    {
+        int sum = num1 + num2;
+        return sum; // 計算結果を返す
+    }
+}
+            </code></pre>
+            <ul>
+                <li><strong><code>public static</code>:</strong> 現時点では「おまじない」と考えてください（後に「アクセス修飾子」と「静的メソッド」として詳しく学びます）。</li>
+                <li><strong><code>void</code>:</strong> メソッドが何も値を返さない場合に指定します。</li>
+                <li><strong><code>int</code>（戻り値の型）:</strong> メソッドが整数値を返すことを示します。</li>
+                <li><strong><code>Greet</code>, <code>Add</code>:</strong> メソッドの名前です。</li>
+                <li><strong><code>(string name)</code>, <code>(int num1, int num2)</code>:</strong> **引数（ひきすう）**です。メソッドに渡すデータ（入力）を指定します。</li>
+                <li><strong><code>return sum;</code>:</strong> メソッドの処理結果として値を返すときに使います。</li>
+                <li><strong>文字列補間 (<code>$""</code>):</strong> C# 6.0から導入された便利な機能で、文字列内に直接変数の値を埋め込むことができます。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>2. クラスとオブジェクト: オブジェクト指向プログラミングの基礎</h2>
+            <p>C#は<strong>オブジェクト指向プログラミング（OOP）</strong>言語です。OOPは、現実世界を「もの（オブジェクト）」と「もの同士の関係」で捉え、それをプログラムで表現する考え方です。これにより、複雑なシステムをより分かりやすく、管理しやすく開発できます。</p>
+            <h3>2.1. クラス (Class) とは？</h3>
+            <p><strong>クラス</strong>は、「ものの設計図」のようなものです。例えば、「車」というクラスを定義するなら、その車がどんな「特徴（色、メーカー、速度など）」を持ち、どんな「動作（走る、止まる、曲がるなど）」ができるのかを設計します。</p>
+            <h3>2.2. オブジェクト (Object) とは？</h3>
+            <p><strong>オブジェクト</strong>は、クラスという設計図に基づいて実際に作られた「もの」そのものです。例えば、「車」の設計図から「赤色のトヨタの車」や「青色のホンダの車」といった具体的な車を複数作ることができます。それぞれの具体的な車がオブジェクトです。</p>
+            <pre><code class="language-csharp">using System;
+
+// 人を表すクラスを定義
+public class Person
+{
+    // フィールド（特徴、プロパティとも言う）
+    public string Name;
+    public int Age;
+
+    // メソッド（動作）
+    public void SayHello()
+    {
+        Console.WriteLine($"こんにちは、私の名前は{Name}です。");
+    }
+
+    public void CelebrateBirthday()
+    {
+        Age++; // 年齢を1増やす
+        Console.WriteLine($"{Name}は{Age}歳になりました！");
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // Personクラスのオブジェクト（インスタンス）を作成
+        Person person1 = new Person();
+        person1.Name = "アリス"; // オブジェクトのNameを設定
+        person1.Age = 30;     // オブジェクトのAgeを設定
+
+        person1.SayHello();       // オブジェクトのメソッドを呼び出す
+        person1.CelebrateBirthday(); // オブジェクトのメソッドを呼び出す
+
+        Console.WriteLine("---");
+
+        // 別のPersonオブジェクトを作成
+        Person person2 = new Person();
+        person2.Name = "ボブ";
+        person2.Age = 22;
+
+        person2.SayHello();
+    }
+}
+            </code></pre>
+            <ul>
+                <li><strong><code>public class Person</code>:</strong> <code>Person</code>という名前のクラスを定義しています。</li>
+                <li><strong><code>public string Name;</code>:</strong> オブジェクトが持つ特徴（データ）を定義する「フィールド」です。</li>
+                <li><strong><code>public void SayHello()</code>:</strong> オブジェクトができる動作（処理）を定義する「メソッド」です。</li>
+                <li><strong><code>Person person1 = new Person();</code>:</strong> <code>new Person()</code>を使って、<code>Person</code>クラスから新しいオブジェクト（インスタンス）を作成し、<code>person1</code>という変数に格納しています。</li>
+                <li><strong><code>person1.Name = "アリス";</code>:</strong> <code>.</code>（ドット）を使って、オブジェクトのフィールドやメソッドにアクセスします。</li>
+            </ul>
+            <div class="note">
+                <p><strong>コンストラクター:</strong> オブジェクトを作成する際に初期設定を行う特別なメソッドです。例えば、<code>public Person(string name, int age) { Name = name; Age = age; }</code> のように定義し、<code>Person person3 = new Person("チャーリー", 40);</code> のように使えます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. 配列とリスト: 複数のデータをまとめて扱う</h2>
+            <p>これまでは一つの変数に一つのデータしか格納できませんでした。しかし、複数の同じ種類のデータをまとめて扱いたい場合が多くあります。そのために<strong>配列</strong>や<strong>リスト</strong>を使います。</p>
+            <h3>3.1. 配列 (Array)</h3>
+            <p><strong>配列</strong>は、同じデータ型の複数のデータをまとめて格納できる「固定長」のデータ構造です。一度配列のサイズを決めると、後から変更することはできません。</p>
+            <pre><code class="language-csharp">using System;
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // 整数型（int）の配列を宣言し、初期化
+        int[] numbers = new int[5]; // サイズが5のint型配列を作成
+
+        // 配列に値を代入
+        numbers[0] = 10; // 0番目の要素に10を代入
+        numbers[1] = 20;
+        numbers[2] = 30;
+        numbers[3] = 40;
+        numbers[4] = 50; // 4番目の要素（最後の要素）
+
+        // 配列の要素にアクセスして表示
+        Console.WriteLine($"numbers[0] の値: {numbers[0]}"); // 10
+        Console.WriteLine($"numbers[2] の値: {numbers[2]}"); // 30
+
+        // 配列の全ての要素をループで表示
+        Console.WriteLine("--- 配列の全要素 ---");
+        for (int i = 0; i &lt; numbers.Length; i++)
+        {
+            Console.WriteLine($"numbers[{i}] = {numbers[i]}");
+        }
+
+        // 初期化と同時に値を設定することも可能
+        string[] names = { "Alice", "Bob", "Charlie" };
+        Console.WriteLine($"names[1] の値: {names[1]}"); // Bob
+    }
+}
+            </code></pre>
+            <ul>
+                <li><strong><code>int[] numbers = new int[5];</code>:</strong> <code>int</code>型の要素を5つ持てる配列を宣言しています。インデックスは0から始まります（0, 1, 2, 3, 4）。</li>
+                <li><strong><code>numbers[0]</code>:</strong> 配列の最初の要素にアクセスします。</li>
+                <li><strong><code>numbers.Length</code>:</strong> 配列の要素数（サイズ）を取得できます。</li>
+            </ul>
+
+            <h3>3.2. リスト (List)</h3>
+            <p><strong>リスト</strong>は、配列と同じように複数のデータを格納できますが、こちらは「可変長」のデータ構造です。要素の追加や削除が容易で、サイズを後から変更できます。配列よりも柔軟なため、多くの場面でリストが使われます。</p>
+            <pre><code class="language-csharp">using System;
+using System.Collections.Generic; // Listを使うために必要
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // string型のリストを宣言し、初期化
+        List&lt;string&gt; fruits = new List&lt;string&gt;();
+
+        // リストに要素を追加
+        fruits.Add("Apple");
+        fruits.Add("Banana");
+        fruits.Add("Orange");
+
+        // リストの要素にアクセスして表示
+        Console.WriteLine($"最初のフルーツ: {fruits[0]}"); // Apple
+
+        // リストの要素をループで表示
+        Console.WriteLine("--- リストの全要素 ---");
+        foreach (string fruit in fruits) // foreachループもよく使われます
+        {
+            Console.WriteLine(fruit);
+        }
+
+        // 要素を削除
+        fruits.Remove("Banana"); // "Banana"という値を削除
+        // fruits.RemoveAt(0); // 0番目の要素を削除 (Appleが削除される)
+
+        Console.WriteLine("--- Banana削除後のリスト ---");
+        foreach (string fruit in fruits)
+        {
+            Console.WriteLine(fruit);
+        }
+
+        Console.WriteLine($"リストの現在の要素数: {fruits.Count}"); // 要素数を取得
+    }
+}
+            </code></pre>
+            <ul>
+                <li><strong><code>using System.Collections.Generic;</code>:</strong> リストを使うために必要な宣言です。</li>
+                <li><strong><code>List&lt;string&gt; fruits = new List&lt;string&gt;();</code>:</strong> <code>string</code>型の要素を格納するリストを宣言しています。<code>&lt;&gt;</code>（ジェネリック）で格納するデータの型を指定します。</li>
+                <li><strong><code>fruits.Add("Apple");</code>:</strong> リストの末尾に要素を追加します。</li>
+                <li><strong><code>fruits.Remove("Banana");</code>:</strong> 指定した値をリストから削除します。</li>
+                <li><strong><code>fruits.Count</code>:</strong> リストの現在の要素数を取得できます。</li>
+                <li><strong><code>foreach</code>ループ:</strong> 配列やリストなどのコレクションの全要素を順番に処理するのに非常に便利です。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. 例外処理: エラーに備える</h2>
+            <p>プログラムが実行中に予期せぬ問題（例: ファイルが見つからない、数値を0で割ろうとした、無効な形式の入力を受け取ったなど）に遭遇することを<strong>例外（Exception）</strong>と呼びます。例外が発生すると、通常、プログラムは停止してしまいます。</p>
+            <p><strong>例外処理（Exception Handling）</strong>は、このような予期せぬエラーが発生した場合でも、プログラムが安全に動作を続けられるようにするための仕組みです。</p>
+            <h3><code>try-catch</code> ステートメント</h3>
+            <p>C#では、<code>try-catch</code>ブロックを使って例外処理を記述します。</p>
+            <ul>
+                <li><strong><code>try</code>ブロック:</strong> 例外が発生する可能性があるコードを記述します。</li>
+                <li><strong><code>catch</code>ブロック:</strong> <code>try</code>ブロック内で例外が発生した場合に、その例外を「捕まえ」、エラーに対する処理を記述します。</li>
+            </ul>
+            <pre><code class="language-csharp">using System;
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Console.Write("数値を入力してください: ");
+        string input = Console.ReadLine();
+
+        try
+        {
+            // ここで例外が発生する可能性がある
+            int number = int.Parse(input); // 文字列を数値に変換（変換できない場合は例外）
+            int result = 100 / number;    // 0で割ると例外が発生する
+
+            Console.WriteLine($"計算結果: {result}");
+        }
+        catch (FormatException ex) // 文字列が数値に変換できない例外を捕まえる
+        {
+            Console.WriteLine("エラー: 無効な形式の数値が入力されました。");
+            Console.WriteLine($"詳細: {ex.Message}"); // エラーメッセージを表示
+        }
+        catch (DivideByZeroException ex) // 0で除算した例外を捕まえる
+        {
+            Console.WriteLine("エラー: 0で割ることはできません。");
+            Console.WriteLine($"詳細: {ex.Message}");
+        }
+        catch (Exception ex) // その他の全ての例外を捕まえる（汎用的な例外ハンドリング）
+        {
+            Console.WriteLine("予期せぬエラーが発生しました。");
+            Console.WriteLine($"詳細: {ex.Message}");
+        }
+        finally
+        {
+            // 例外の有無にかかわらず、必ず実行される処理（リソースの解放など）
+            Console.WriteLine("処理が終了しました。");
+        }
+
+        Console.WriteLine("--- プログラムは継続して実行されます ---");
+    }
+}
+            </code></pre>
+            <ul>
+                <li><strong><code>try { ... }</code>:</strong> 正常に実行されるべきコードを記述します。</li>
+                <li><strong><code>catch (例外の型 変数名) { ... }</code>:</strong> <code>try</code>ブロック内で特定の種類の例外が発生した場合に実行されます。<code>FormatException</code>や<code>DivideByZeroException</code>のように、より具体的な例外型を指定することで、エラーの種類に応じて異なる処理ができます。</li>
+                <li><strong><code>Exception ex</code>:</strong> 全ての例外の基底クラスであり、どんな例外でも捕まえることができます。通常は、具体的な例外をキャッチした後に、それ以外の全ての例外をキャッチするために最後に記述します。</li>
+                <li><strong><code>ex.Message</code>:</strong> 発生した例外に関する詳細なメッセージを取得できます。</li>
+                <li><strong><code>finally { ... }</code>:</strong> <code>try</code>ブロックの処理が完了した後、例外が発生したかどうかに関わらず、必ず実行されるコードを記述します。ファイルのクローズなど、リソースの解放によく使われます。</li>
+            </ul>
+            <div class="warning">
+                <p><strong>注意:</strong> 例外処理は万能薬ではありません。できる限りエラーが発生しないように、入力値の検証（バリデーション）など事前に対策を講じることが重要です。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>まとめと次のステップ</h2>
+            <p>この資料で、C#の<strong>メソッド</strong>、<strong>クラスとオブジェクト</strong>、<strong>配列とリスト</strong>、そして<strong>例外処理</strong>といった重要な概念を学びました。これらを理解し使いこなすことで、より堅牢で、保守しやすく、拡張性の高いプログラムを開発できるようになります。</p>
+            <p><strong>次のステップとして、これらの概念を組み合わせて、小さなアプリケーションを作成してみましょう。</strong> 例えば、以下のようなものが考えられます。</p>
+            <ul>
+                <li>複数の学生の情報を管理し、平均点を計算するプログラム（クラス、リスト、メソッド）</li>
+                <li>ユーザーからの入力に基づいて、簡単な計算や条件分岐を行うツール（例外処理、メソッド）</li>
+            </ul>
+            <p>実際に手を動かし、様々な問題を解決していく中で、これらの概念への理解がさらに深まります。頑張ってください！</p>
+        </section>
+
+        <section>
+            <h2>参考資料</h2>
+            <ul>
+                <li><a href="https://learn.microsoft.com/ja-jp/dotnet/csharp/fundamentals/methods/" target="_blank">Microsoft Learn: C# のメソッド</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/dotnet/csharp/fundamentals/tutorials/oop" target="_blank">Microsoft Learn: オブジェクト指向プログラミングの概要</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/dotnet/csharp/language-reference/arrays/" target="_blank">Microsoft Learn: C# の配列</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/dotnet/api/system.collections.generic.list-1" target="_blank">Microsoft Learn: List&lt;T&gt; クラス</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/dotnet/csharp/fundamentals/exceptions/handling-exceptions" target="_blank">Microsoft Learn: 例外の処理とスロー</a></li>
+            </ul>
+        </section>
+
+        <footer>
+            <p style="text-align: center; font-size: 0.85em; color: #6c757d; margin-top: 40px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                作成日: 2025年6月12日
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
