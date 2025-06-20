@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQLテスト - 上級編</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); max-width: 900px; margin: auto; }
+        h1, h2 { color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-top: 30px; }
+        h3 { color: #007bff; margin-top: 25px; }
+        p { margin-bottom: 10px; line-height: 1.6; }
+        pre { background-color: #e9e9e9; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+        code { font-family: 'Consolas', 'Courier New', monospace; color: #c7254e; }
+        .question { margin-bottom: 25px; border: 1px solid #ddd; padding: 15px; border-radius: 5px; background-color: #fcfcfc; }
+        .question strong { color: #333; }
+        .answer-area { background-color: #e0eaff; padding: 10px; border-radius: 5px; margin-top: 10px; font-style: italic; color: #004085; }
+        .table-definition { background-color: #f0f8ff; padding: 15px; border-left: 5px solid #007bff; margin-bottom: 20px; border-radius: 5px; }
+        textarea.user-input { width: calc(100% - 20px); height: 80px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; resize: vertical; margin-bottom: 10px; }
+        .download-button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; margin-top: 20px; margin-bottom: 10px; }
+        .download-button:hover { background-color: #0056b3; }
+        .test-data-button { background-color: #ff8c00; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; margin-top: 30px; margin-bottom: 10px; }
+        .test-data-button:hover { background-color: #cc7000; }
+        .show-all-answers-button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; margin-top: 20px; margin-bottom: 10px; }
+        .show-all-answers-button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SQLテスト - 上級編</h1>
+        <p>このテストは、SQL Serverにおけるウィンドウ関数、共通テーブル式（CTE）、高度なデータ操作など、より複雑なSQLスキルを測定することを目的としています。</p>
+        <p><strong>注:</strong> 各問題の解答は、SQL Serverの構文に基づいて記述してください。</p>
+
+        <button class="test-data-button" onclick="downloadTestData()">テストデータをダウンロード (.sql)</button>
+
+        <h2>問題</h2>
+
+        <p>以下のテーブル定義とデータ（テストデータで投入されるもの）を考慮して解答してください。</p>
+
+        <div class="table-definition">
+            <h3>テーブル定義: <code>Sales</code> (売上データ)</h3>
+            <pre>
+CREATE TABLE Sales (
+    SaleID INT PRIMARY KEY IDENTITY(1,1),
+    ProductID INT NOT NULL,
+    SaleDate DATE NOT NULL,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(10, 2) NOT NULL,
+    Region NVARCHAR(50), -- 'East', 'West', 'North', 'South' など
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Products</code> (商品情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY IDENTITY(1,1),
+    ProductName NVARCHAR(100) NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    StockQuantity INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.1 (ウィンドウ関数 - RANK):</strong> 各商品（<code>ProductID</code>）について、売上日（<code>SaleDate</code>）ごとに最も売れた（<code>Quantity</code>が最大）上位3つの販売記録を、販売日と数量でランク付けして取得するSQL文を記述してください。同じ数量の場合は同じランクとし、次のランクを飛ばしてください。有効な販売記録のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_1_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.2 (CTEと集計):</strong> 共通テーブル式（CTE）を使用して、各地域（<code>Region</code>）の月ごとの総売上高を計算し、最も総売上高が高い月の地域と売上高を表示するSQL文を記述してください。有効な販売記録のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_2_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.3 (UPDATE FROM と条件付き更新):</strong> <code>Products</code>テーブルの<code>StockQuantity</code>を更新します。もし2024年に入ってから販売実績がない有効な商品があれば、その商品の<code>StockQuantity</code>を10%増加させるSQL文を記述してください。ただし、増加後の<code>StockQuantity</code>が1000を超える場合は1000に制限し、<code>UpdateUser</code>も適切に設定してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_3_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.4 (UNION ALL とデータ整形):</strong> 各地域（<code>Region</code>）と各商品（<code>ProductName</code>）について、それぞれ総売上高を計算し、2つの結果セットを1つに結合して表示するSQL文を記述してください。結合後の結果セットには、「タイプ」（'Region'または'Product'）、「名前」（地域名または商品名）、「総売上高」の列を含めてください。有効な販売記録と商品のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_4_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.5 (PIVOT/CASE と集計):</strong> 各商品（<code>ProductName</code>）について、地域別（'East', 'West', 'North', 'South'）の総売上高を列として表示するSQL文を記述してください。該当地域に売上がない場合は0と表示してください。有効な販売記録と商品のみを対象とし、`PIVOT`句または`CASE`式と集計関数を組み合わせて使用してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_5_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <button class="download-button" onclick="downloadUserAnswers('advanced')">上級編の記述回答をダウンロード (.sql)</button>
+        <button class="show-all-answers-button" onclick="downloadModelAnswers('advanced')">上級編の模範回答をダウンロード (.sql)</button>
+
+    </div>
+
+    <script>
+        // 模範解答データ
+        const modelAnswers_advanced = {
+            q3_1: `
+-- 問題 3.1 (ウィンドウ関数 - RANK): 各商品における売上日ごとの売上トップ3
+WITH RankedSales AS (
+    SELECT
+        SaleID,
+        ProductID,
+        SaleDate,
+        Quantity,
+        UnitPrice,
+        Quantity * UnitPrice AS TotalSale,
+        RANK() OVER (PARTITION BY ProductID ORDER BY SaleDate DESC, Quantity DESC) AS SaleRank
+    FROM
+        Sales
+    WHERE
+        Enabled = 1
+)
+SELECT
+    SaleID,
+    ProductID,
+    SaleDate,
+    Quantity,
+    UnitPrice,
+    TotalSale,
+    SaleRank
+FROM
+    RankedSales
+WHERE
+    SaleRank <= 3
+ORDER BY
+    ProductID, SaleRank;
+`,
+            q3_2: `
+-- 問題 3.2 (CTEと集計): 各地域の月ごとの総売上高と最も高い月の売上
+WITH MonthlyRegionSales AS (
+    SELECT
+        Region,
+        FORMAT(SaleDate, 'yyyy-MM') AS SaleMonth, -- SQL Server 2012+
+        SUM(Quantity * UnitPrice) AS MonthlyTotalSales
+    FROM
+        Sales
+    WHERE
+        Enabled = 1
+    GROUP BY
+        Region, FORMAT(SaleDate, 'yyyy-MM')
+),
+RankedMonthlySales AS (
+    SELECT
+        Region,
+        SaleMonth,
+        MonthlyTotalSales,
+        ROW_NUMBER() OVER (PARTITION BY Region ORDER BY MonthlyTotalSales DESC) AS Rn
+    FROM
+        MonthlyRegionSales
+)
+SELECT
+    Region,
+    SaleMonth,
+    MonthlyTotalSales
+FROM
+    RankedMonthlySales
+WHERE
+    Rn = 1
+ORDER BY
+    Region;
+`,
+            q3_3: `
+-- 問題 3.3 (UPDATE FROM と条件付き更新): 販売実績がない商品の在庫増加
+UPDATE P
+SET
+    P.StockQuantity = CASE
+                        WHEN P.StockQuantity * 1.1 > 1000 THEN 1000
+                        ELSE CEILING(P.StockQuantity * 1.1) -- 小数点以下を切り上げ
+                      END,
+    P.UpdateDate = GETDATE(),
+    P.UpdateUser = N'AutoStockUpdater'
+FROM
+    Products AS P
+WHERE
+    P.Enabled = 1
+    AND NOT EXISTS (
+        SELECT 1
+        FROM Sales AS S
+        WHERE S.ProductID = P.ProductID
+          AND S.Enabled = 1
+          AND YEAR(S.SaleDate) = 2024
+    );
+`,
+            q3_4: `
+-- 問題 3.4 (UNION ALL とデータ整形): 地域別と商品別の総売上高結合
+SELECT
+    N'Region' AS Type,
+    Region AS Name,
+    SUM(Quantity * UnitPrice) AS TotalSales
+FROM
+    Sales
+WHERE
+    Enabled = 1
+GROUP BY
+    Region
+
+UNION ALL
+
+SELECT
+    N'Product' AS Type,
+    P.ProductName AS Name,
+    SUM(S.Quantity * S.UnitPrice) AS TotalSales
+FROM
+    Sales AS S
+JOIN
+    Products AS P ON S.ProductID = P.ProductID
+WHERE
+    S.Enabled = 1 AND P.Enabled = 1
+GROUP BY
+    P.ProductName
+ORDER BY
+    Type, TotalSales DESC;
+`,
+            q3_5: `
+-- 問題 3.5 (PIVOT/CASE と集計): 各商品の地域別総売上高
+SELECT
+    P.ProductName,
+    ISNULL([East], 0) AS EastSales,
+    ISNULL([West], 0) AS WestSales,
+    ISNULL([North], 0) AS NorthSales,
+    ISNULL([South], 0) AS SouthSales
+FROM
+    Products AS P
+LEFT JOIN (
+    SELECT
+        ProductID,
+        Region,
+        SUM(Quantity * UnitPrice) AS RegionTotalSales
+    FROM
+        Sales
+    WHERE Enabled = 1
+    GROUP BY
+        ProductID, Region
+) AS RegionalSales ON P.ProductID = RegionalSales.ProductID
+PIVOT (
+    SUM(RegionTotalSales)
+    FOR Region IN ([East], [West], [North], [South])
+) AS PivotTable
+WHERE
+    P.Enabled = 1
+ORDER BY
+    P.ProductName;
+
+/*
+-- CASE 式を使用する場合の例:
+SELECT
+    P.ProductName,
+    SUM(CASE WHEN S.Region = N'East' THEN S.Quantity * S.UnitPrice ELSE 0 END) AS EastSales,
+    SUM(CASE WHEN S.Region = N'West' THEN S.Quantity * S.UnitPrice ELSE 0 END) AS WestSales,
+    SUM(CASE WHEN S.Region = N'North' THEN S.Quantity * S.UnitPrice ELSE 0 END) AS NorthSales,
+    SUM(CASE WHEN S.Region = N'South' THEN S.Quantity * S.UnitPrice ELSE 0 END) AS SouthSales
+FROM
+    Products AS P
+LEFT JOIN
+    Sales AS S ON P.ProductID = S.ProductID AND S.Enabled = 1
+WHERE
+    P.Enabled = 1
+GROUP BY
+    P.ProductName
+ORDER BY
+    P.ProductName;
+*/
+`
+        };
+
+        // ユーザーが記述した回答をダウンロードする関数
+        function downloadUserAnswers(level) {
+            let combinedUserAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'advanced') {
+                filename = `sql_test_advanced_my_answers_${timestamp}.sql`;
+                combinedUserAnswers += `-- SQLテスト - 上級編 (記述回答) ${new Date().toLocaleString()}\n\n`;
+                combinedUserAnswers += `-- 問題 3.1 (ウィンドウ関数 - RANK)\n` + document.getElementById('q3_1_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.2 (CTEと集計)\n` + document.getElementById('q3_2_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.3 (UPDATE FROM と条件付き更新)\n` + document.getElementById('q3_3_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.4 (UNION ALL とデータ整形)\n` + document.getElementById('q3_4_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.5 (PIVOT/CASE と集計)\n` + document.getElementById('q3_5_input').value.trim() + '\n';
+            }
+
+            const headerLength = (`-- SQLテスト - 上級編 (記述回答) `.length + new Date().toLocaleString().length + 2);
+            if (combinedUserAnswers.trim().length <= headerLength) {
+                alert('回答が記述されていません。');
+                return;
+            }
+
+            const blob = new Blob([combinedUserAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        // 模範解答をダウンロードする関数
+        function downloadModelAnswers(level) {
+            let combinedAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'advanced') {
+                filename = `sql_test_advanced_model_answers_${timestamp}.sql`;
+                combinedAnswers += `-- SQLテスト - 上級編 模範回答 ${new Date().toLocaleString()}\n\n`;
+                combinedAnswers += modelAnswers_advanced.q3_1 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced.q3_2 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced.q3_3 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced.q3_4 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced.q3_5 + '\n';
+            }
+
+            const blob = new Blob([combinedAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        // テストデータをダウンロードする関数
+        function downloadTestData() {
+            const testDataSql = `
+-- テストデータ投入用SQLスクリプト (上級編)
+-- 注意: 既にデータが存在する場合は重複する可能性があります。
+-- 必要に応じて TRUNCATE TABLE または DELETE FROM で既存データをクリアしてください。
+
+-- 既存テーブルの削除（依存関係に注意）
+IF OBJECT_ID('Sales', 'U') IS NOT NULL DROP TABLE Sales;
+IF OBJECT_ID('Products', 'U') IS NOT NULL DROP TABLE Products;
+
+-- Products テーブル作成 (再掲)
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY IDENTITY(1,1),
+    ProductName NVARCHAR(100) NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    StockQuantity INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Sales テーブル作成
+CREATE TABLE Sales (
+    SaleID INT PRIMARY KEY IDENTITY(1,1),
+    ProductID INT NOT NULL,
+    SaleDate DATE NOT NULL,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(10, 2) NOT NULL,
+    Region NVARCHAR(50),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+PRINT N'-- 上級編テストデータ挿入開始 --';
+
+-- Products データ
+SET IDENTITY_INSERT Products ON;
+INSERT INTO Products (ProductID, ProductName, Price, StockQuantity, Enabled, UpdateUser) VALUES
+(101, N'スマートフォン', 80000.00, 150, 1, N'Loader'),
+(102, N'タブレットPC', 50000.00, 100, 1, N'Loader'),
+(103, N'スマートウォッチ', 25000.00, 200, 1, N'Loader'),
+(104, N'ワイヤレスイヤホン', 15000.00, 300, 1, N'Loader'),
+(105, N'ポータブル充電器', 5000.00, 50, 1, N'Loader'), -- 2024年販売実績なし
+(106, N'Bluetoothスピーカー', 12000.00, 80, 1, N'Loader'),
+(107, N'VRヘッドセット', 100000.00, 20, 1, N'Loader'),
+(108, N'ドローン', 70000.00, 10, 1, N'Loader'), -- 在庫が少ない商品
+(109, N'ウェブカメラ', 8000.00, 20, 0, N'Loader'); -- 論理削除済み商品
+SET IDENTITY_INSERT Products OFF;
+
+-- Sales データ
+SET IDENTITY_INSERT Sales ON;
+INSERT INTO Sales (SaleID, ProductID, SaleDate, Quantity, UnitPrice, Region, Enabled, UpdateUser) VALUES
+-- ProductID 101 (スマートフォン)
+(1, 101, '2024-01-05', 5, 80000.00, N'East', 1, N'Loader'),
+(2, 101, '2024-01-10', 3, 80000.00, N'West', 1, N'Loader'),
+(3, 101, '2024-02-01', 7, 80000.00, N'East', 1, N'Loader'),
+(4, 101, '2024-02-15', 4, 80000.00, N'North', 1, N'Loader'),
+(5, 101, '2024-03-20', 6, 80000.00, N'East', 1, N'Loader'),
+
+-- ProductID 102 (タブレットPC)
+(6, 102, '2024-01-08', 2, 50000.00, N'West', 1, N'Loader'),
+(7, 102, '2024-01-25', 4, 50000.00, N'East', 1, N'Loader'),
+(8, 102, '2024-02-10', 3, 50000.00, N'West', 1, N'Loader'),
+
+-- ProductID 103 (スマートウォッチ)
+(9, 103, '2024-01-12', 10, 25000.00, N'North', 1, N'Loader'),
+(10, 103, '2024-02-05', 8, 25000.00, N'South', 1, N'Loader'),
+(11, 103, '2024-03-01', 12, 25000.00, N'North', 1, N'Loader'),
+
+-- ProductID 104 (ワイヤレスイヤホン)
+(12, 104, '2024-01-03', 15, 15000.00, N'East', 1, N'Loader'),
+(13, 104, '2024-01-20', 10, 15000.00, N'West', 1, N'Loader'),
+(14, 104, '2024-02-28', 20, 15000.00, N'East', 1, N'Loader'),
+
+-- ProductID 106 (Bluetoothスピーカー)
+(15, 106, '2024-03-10', 5, 12000.00, N'South', 1, N'Loader'),
+(16, 106, '2024-04-01', 3, 12000.00, N'North', 1, N'Loader');
+
+-- 過去の売上
+(17, 101, '2023-12-01', 2, 80000.00, N'East', 1, N'Loader'),
+(18, 102, '2023-11-15', 1, 50000.00, N'West', 1, N'Loader');
+
+-- 論理削除された売上
+(19, 104, '2024-04-10', 5, 15000.00, N'East', 0, N'Loader');
+SET IDENTITY_INSERT Sales OFF;
+
+PRINT N'-- 上級編テストデータ挿入完了 --';
+            `;
+
+            const blob = new Blob([testDataSql.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sql_test_advanced_data_setup_${timestamp}.sql`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+</body>
+</html>

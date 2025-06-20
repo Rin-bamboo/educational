@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL教育資料</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            border-bottom: 1px solid #0056b3;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+        h3 {
+            margin-top: 25px;
+            color: #007bff;
+        }
+        section {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        pre {
+            background-color: #e9e9e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #333;
+        }
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #d14;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffeeba;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SQL教育資料</h1>
+
+    <section>
+        <h2>はじめに</h2>
+        <p>この資料は、SQL（Structured Query Language）の学習を始める方から、より高度なSQLスキルを身につけたい方までを対象としています。SQLは、リレーショナルデータベースを操作するための標準的な言語であり、データの抽出、操作、管理を行う上で不可欠なツールです。</p>
+        <p>本資料は、「基本」「応用」「上級」の3つのセクションに分かれています。各セクションを通じて、SQLの概念と実践的な使い方を段階的に学んでいきましょう。</p>
+    </section>
+
+    <section>
+        <h2>基本編：SQLの基礎</h2>
+        <h3>1. SQLとは？</h3>
+        <p>SQL（Structured Query Language）は、リレーショナルデータベース管理システム（RDBMS）とやり取りするためのプログラミング言語です。データを検索、挿入、更新、削除したり、データベースの構造を定義したりするために使用されます。</p>
+
+        <h3>2. データベースとテーブルの概念</h3>
+        <ul>
+            <li><strong>データベース:</strong> 関連するデータの集まり。例えば、会社の顧客データ、製品データなどが一つのデータベースにまとめられます。</li>
+            <li><strong>テーブル:</strong> データベース内でデータを格納する基本的な構造。行と列から構成されるスプレッドシートのようなものです。</li>
+            <li><strong>行（レコード）:</strong> テーブル内の単一のデータエントリ。</li>
+            <li><strong>列（フィールド）:</strong> テーブル内の特定の種類のデータ。</li>
+        </ul>
+        <p><strong>例: <code>Customers</code> テーブル</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>CustomerID</th>
+                    <th>CustomerName</th>
+                    <th>ContactName</th>
+                    <th>City</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Alfreds Futterkiste</td>
+                    <td>Maria Anders</td>
+                    <td>Berlin</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Ana Trujillo Emparedados y helados</td>
+                    <td>Ana Trujillo</td>
+                    <td>México D.F.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>3. 基本的なSQLコマンド</h3>
+        <h4>SELECT文：データの検索</h4>
+        <p>テーブルからデータを取得するために使用します。</p>
+        <pre><code>
+-- テーブルのすべての列とすべての行を取得
+SELECT * FROM Customers;
+
+-- 特定の列のみを取得
+SELECT CustomerName, City FROM Customers;
+
+-- 条件を指定して行を絞り込む (WHERE句)
+SELECT * FROM Customers WHERE City = 'Berlin';
+
+-- 複数の条件を指定 (AND, OR)
+SELECT * FROM Customers WHERE City = 'Berlin' AND CustomerID = 1;
+SELECT * FROM Customers WHERE City = 'Berlin' OR City = 'London';
+        </code></pre>
+
+        <h4>INSERT INTO文：データの挿入</h4>
+        <p>テーブルに新しい行を追加します。</p>
+        <pre><code>
+-- すべての列にデータを挿入
+INSERT INTO Customers (CustomerID, CustomerName, ContactName, City)
+VALUES (3, 'New Customer Inc.', 'John Doe', 'New York');
+
+-- 特定の列にデータを挿入 (残りはNULLまたはデフォルト値)
+INSERT INTO Customers (CustomerName, City)
+VALUES ('Another Customer', 'Paris');
+        </code></pre>
+
+        <h4>UPDATE文：データの更新</h4>
+        <p>既存のテーブルのデータを変更します。</p>
+        <pre><code>
+-- 特定の条件に合致する行のデータを更新
+UPDATE Customers
+SET ContactName = 'Jane Smith', City = 'London'
+WHERE CustomerID = 3;
+        </code></pre>
+
+        <h4>DELETE FROM文：データの削除</h4>
+        <p>テーブルから行を削除します。</p>
+        <pre><code>
+-- 特定の条件に合致する行を削除
+DELETE FROM Customers WHERE CustomerID = 3;
+
+-- テーブルのすべての行を削除 (注意！元に戻せません)
+-- DELETE FROM Customers;
+        </code></pre>
+
+        <h4>CREATE TABLE文：テーブルの作成</h4>
+        <p>新しいテーブルを作成します。</p>
+        <pre><code>
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    Price DECIMAL(10, 2),
+    StockQuantity INT
+);
+        </code></pre>
+
+        <h4>DROP TABLE文：テーブルの削除</h4>
+        <p>既存のテーブルを削除します。（データも構造も完全に削除されます）</p>
+        <pre><code>
+DROP TABLE Products;
+        </code></pre>
+        <div class="note">
+            <strong>注意:</strong> <code>DELETE FROM</code> は行を削除しますがテーブルは残ります。<code>DROP TABLE</code> はテーブル自体を削除します。
+        </div>
+    </section>
+
+    <section>
+        <h2>応用編：より複雑なデータ操作</h2>
+        <h3>1. データの並べ替えと制限</h3>
+        <h4>ORDER BY句：データの並べ替え</h4>
+        <p>結果セットを指定した列に基づいて並べ替えます。昇順 (ASC) または降順 (DESC) で指定できます。</p>
+        <pre><code>
+-- CustomerName で昇順に並べ替え
+SELECT * FROM Customers ORDER BY CustomerName ASC;
+
+-- City で降順に並べ替え
+SELECT * FROM Customers ORDER BY City DESC;
+
+-- 複数の列で並べ替え (City の昇順、次に CustomerName の昇順)
+SELECT * FROM Customers ORDER BY City ASC, CustomerName ASC;
+        </code></pre>
+
+        <h4>LIMIT/OFFSET (または TOP/ROWNUM)句：取得する行数の制限</h4>
+        <p>取得する行数を制限したり、特定の位置から行を取得したりします。データベースシステムによって構文が異なります。</p>
+        <ul>
+            <li><strong>MySQL, PostgreSQL: <code>LIMIT</code>, <code>OFFSET</code></strong></li>
+            <li><strong>SQL Server: <code>TOP</code>, <code>OFFSET FETCH</code></strong></li>
+            <li><strong>Oracle: <code>ROWNUM</code> (または 12c以降の <code>OFFSET FETCH</code>)</strong></li>
+        </ul>
+        <p><strong>例 (MySQL/PostgreSQL):</strong></p>
+        <pre><code>
+-- 最初の5行を取得
+SELECT * FROM Customers LIMIT 5;
+
+-- 6番目から10番目の行を取得 (最初の5行をスキップして次の5行)
+SELECT * FROM Customers LIMIT 5 OFFSET 5;
+        </code></pre>
+
+        <h3>2. 集計関数</h3>
+        <p>データの集計を行うための関数です。</p>
+        <ul>
+            <li><code>COUNT()</code>: 行数をカウント</li>
+            <li><code>SUM()</code>: 数値列の合計</li>
+            <li><code>AVG()</code>: 数値列の平均</li>
+            <li><code>MIN()</code>: 数値列の最小値</li>
+            <li><code>MAX()</code>: 数値列の最大値</li>
+        </ul>
+        <pre><code>
+-- Customers テーブルの総レコード数を取得
+SELECT COUNT(*) FROM Customers;
+
+-- 特定の条件に合致するレコード数を取得
+SELECT COUNT(CustomerID) FROM Customers WHERE City = 'Berlin';
+
+-- Products テーブルの価格の合計と平均
+SELECT SUM(Price), AVG(Price) FROM Products;
+
+-- Products テーブルの最高価格と最低価格
+SELECT MAX(Price), MIN(Price) FROM Products;
+        </code></pre>
+
+        <h3>3. GROUP BY句：データのグループ化</h3>
+        <p>指定した列の値に基づいて行をグループ化し、各グループに対して集計関数を適用します。</p>
+        <pre><code>
+-- City ごとに顧客数をカウント
+SELECT City, COUNT(CustomerID) FROM Customers GROUP BY City;
+
+-- City ごとに顧客数が2人以上のものだけを抽出 (HAVING句)
+SELECT City, COUNT(CustomerID)
+FROM Customers
+GROUP BY City
+HAVING COUNT(CustomerID) >= 2;
+        </code></pre>
+        <div class="note">
+            <strong>注意:</strong> <code>WHERE</code> 句はグループ化の前に個々の行をフィルタリングし、<code>HAVING</code> 句はグループ化された結果をフィルタリングします。
+        </div>
+
+        <h3>4. JOIN句：複数のテーブルの結合</h3>
+        <p>複数のテーブルを共通の列に基づいて結合し、関連するデータを一度に取得します。</p>
+        <ul>
+            <li><strong><code>INNER JOIN</code>:</strong> 両方のテーブルに一致する行のみを返します。</li>
+            <li><strong><code>LEFT JOIN</code> (または <code>LEFT OUTER JOIN</code>):</strong> 左側のテーブルのすべての行と、右側のテーブルの対応する行を返します。右側に一致する行がない場合はNULLを返します。</li>
+            <li><strong><code>RIGHT JOIN</code> (または <code>RIGHT OUTER JOIN</code>):</strong> 右側のテーブルのすべての行と、左側のテーブルの対応する行を返します。左側に一致する行がない場合はNULLを返します。</li>
+            <li><strong><code>FULL JOIN</code> (または <code>FULL OUTER JOIN</code>):</strong> どちらかのテーブルに一致する行があるすべての行を返します。（MySQLでは直接サポートされていません。<code>UNION</code> を使用して実現します。）</li>
+        </ul>
+        <p><strong>例: <code>Orders</code> テーブルと <code>Customers</code> テーブルを結合</strong></p>
+        <p>想定テーブル構造:</p>
+        <pre><code>
+-- Customersテーブル: CustomerID, CustomerName, ...
+-- Ordersテーブル: OrderID, CustomerID, OrderDate, ...
+        </code></pre>
+        <pre><code>
+-- 顧客名とそれに対応する注文情報を取得 (INNER JOIN)
+SELECT
+    C.CustomerName,
+    O.OrderID,
+    O.OrderDate
+FROM
+    Customers AS C
+INNER JOIN
+    Orders AS O ON C.CustomerID = O.CustomerID;
+
+-- すべての顧客と、もしあればその注文情報を取得 (LEFT JOIN)
+SELECT
+    C.CustomerName,
+    O.OrderID,
+    O.OrderDate
+FROM
+    Customers AS C
+LEFT JOIN
+    Orders AS O ON C.CustomerID = O.CustomerID;
+        </code></pre>
+
+        <h3>5. サブクエリ（副問い合わせ）</h3>
+        <p>別のSQLクエリの中にネストされたクエリです。メインクエリの結果を絞り込んだり、計算したりするために使用されます。</p>
+        <pre><code>
+-- 平均価格より高い価格の製品を取得
+SELECT ProductName, Price
+FROM Products
+WHERE Price > (SELECT AVG(Price) FROM Products);
+
+-- 注文がある顧客の名前を取得 (IN句を使用)
+SELECT CustomerName
+FROM Customers
+WHERE CustomerID IN (SELECT CustomerID FROM Orders);
+        </code></pre>
+    </section>
+
+    <section>
+        <h2>上級編：高度なSQLテクニック</h2>
+        <h3>1. ウィンドウ関数</h3>
+        <p>行のグループに対して計算を実行しますが、<code>GROUP BY</code>のように行をまとめたりはしません。各行に対して独立した結果を返します。ランキング、移動平均、累積合計などに使用されます。</p>
+        <p>構文: <code>関数名() OVER ([PARTITION BY 列] [ORDER BY 列 [ASC|DESC]])</code></p>
+        <ul>
+            <li><code>PARTITION BY</code>: データセットをパーティション（グループ）に分割します。</li>
+            <li><code>ORDER BY</code>: 各パーティション内で結果をソートします。</li>
+        </ul>
+        <h4>例: ランキング関数 (<code>ROW_NUMBER()</code>, <code>RANK()</code>, <code>DENSE_RANK()</code>)</h4>
+        <pre><code>
+-- ProductsテーブルにCategoryIdを追加して例示
+-- CREATE TABLE Products (ProductID INT, ProductName VARCHAR(255), Price DECIMAL(10,2), CategoryId INT);
+-- INSERT INTO Products VALUES (1, 'ProductA', 100, 1), (2, 'ProductB', 150, 1), (3, 'ProductC', 80, 2), (4, 'ProductD', 120, 2), (5, 'ProductE', 150, 1);
+
+SELECT
+    ProductID,
+    ProductName,
+    Price,
+    CategoryId,
+    ROW_NUMBER() OVER (PARTITION BY CategoryId ORDER BY Price DESC) AS RowNumByPrice,
+    RANK() OVER (PARTITION BY CategoryId ORDER BY Price DESC) AS RankByPrice,
+    DENSE_RANK() OVER (PARTITION BY CategoryId ORDER BY Price DESC) AS DenseRankByPrice
+FROM
+    Products;
+        </code></pre>
+        <p>各関数の違い:</p>
+        <ul>
+            <li><code>ROW_NUMBER()</code>: 行にユニークな連番を割り振ります。</li>
+            <li><code>RANK()</code>: 同じ値の場合は同じランクを割り振り、次のランクはスキップされます。</li>
+            <li><code>DENSE_RANK()</code>: 同じ値の場合は同じランクを割り振り、次のランクはスキップされません。</li>
+        </ul>
+
+        <h4>例: 累積合計 (<code>SUM() OVER</code>)</h4>
+        <pre><code>
+-- OrdersテーブルにOrderDateとAmountを追加して例示
+-- CREATE TABLE Orders (OrderID INT, CustomerID INT, OrderDate DATE, Amount DECIMAL(10,2));
+-- INSERT INTO Orders VALUES (1, 1, '2025-01-01', 100), (2, 1, '2025-01-05', 150), (3, 2, '2025-01-02', 200), (4, 1, '2025-01-10', 50);
+
+SELECT
+    OrderID,
+    CustomerID,
+    OrderDate,
+    Amount,
+    SUM(Amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate) AS CumulativeAmountByCustomer
+FROM
+    Orders;
+        </code></pre>
+
+        <h3>2. CTE (Common Table Expressions) / WITH句</h3>
+        <p>一時的な名前付きの結果セットを定義し、より読みやすく、管理しやすい複雑なクエリを作成するために使用されます。自己結合や再帰クエリに特に有用です。</p>
+        <pre><code>
+-- 平均価格より高い製品をCTEを使って取得
+WITH AveragePrice AS (
+    SELECT AVG(Price) AS AvgPrice
+    FROM Products
+)
+SELECT
+    P.ProductName,
+    P.Price
+FROM
+    Products AS P,
+    AveragePrice AS AP
+WHERE
+    P.Price > AP.AvgPrice;
+
+-- 複数のCTEを連結
+WITH CustomerOrders AS (
+    SELECT CustomerID, COUNT(OrderID) AS TotalOrders
+    FROM Orders
+    GROUP BY CustomerID
+),
+LargeOrderCustomers AS (
+    SELECT CustomerID
+    FROM CustomerOrders
+    WHERE TotalOrders >= 2
+)
+SELECT
+    C.CustomerName
+FROM
+    Customers AS C
+JOIN
+    LargeOrderCustomers AS LOC ON C.CustomerID = LOC.CustomerID;
+        </code></pre>
+
+        <h3>3. ストアドプロシージャと関数 (概念)</h3>
+        <ul>
+            <li><strong>ストアドプロシージャ:</strong> データベースに保存される一連のSQL文です。複雑なビジネスロジックをカプセル化し、再利用性を高め、パフォーマンスを向上させることができます。引数を受け取り、結果を返すこともできます。</li>
+            <li><strong>関数:</strong> ストアドプロシージャに似ていますが、通常は単一の値を返すことに特化しています。SQLクエリ内で直接呼び出すことができます。</li>
+        </ul>
+        <div class="note">
+            これらの実装はRDBMSによって構文が大きく異なります（例: SQL ServerのT-SQL、OracleのPL/SQL、PostgreSQLのPL/pgSQLなど）。
+        </div>
+        <p><strong>例 (SQL Serverでのストアドプロシージャの概念):</strong></p>
+        <pre><code>
+-- ストアドプロシージャの作成例
+CREATE PROCEDURE GetCustomerOrders
+    @CustomerID INT
+AS
+BEGIN
+    SELECT *
+    FROM Orders
+    WHERE CustomerID = @CustomerID;
+END;
+
+-- ストアドプロシージャの実行例
+EXEC GetCustomerOrders @CustomerID = 1;
+        </code></pre>
+
+        <h3>4. トランザクション制御 (ACID特性)</h3>
+        <p>データベース操作の整合性と信頼性を確保するためのメカニズムです。一連のSQL文を単一の論理的な作業単位として扱います。</p>
+        <ul>
+            <li><strong><code>BEGIN TRANSACTION</code> (または <code>START TRANSACTION</code>):</strong> トランザクションを開始します。</li>
+            <li><strong><code>COMMIT</code>:</strong> トランザクション内のすべての変更をデータベースに永続的に保存します。</li>
+            <li><strong><code>ROLLBACK</code>:</strong> トランザクション内のすべての変更を取り消し、トランザクション開始前の状態に戻します。</li>
+        </ul>
+        <p><strong>ACID特性:</strong></p>
+        <ul>
+            <li><strong>Atomicity (原子性):</strong> トランザクション内のすべての操作は完全に実行されるか、全く実行されないかのどちらかです。</li>
+            <li><strong>Consistency (一貫性):</strong> トランザクションの開始時と終了時に、データベースは常に整合性のとれた状態に保たれます。</li>
+            <li><strong>Isolation (独立性):</strong> 複数のトランザクションが同時に実行されても、それぞれが互いに影響を与えず、あたかも単独で実行されているかのように見えます。</li>
+            <li><strong>Durability (永続性):</strong> コミットされたトランザクションの変更は、システム障害が発生しても失われません。</li>
+        </ul>
+        <pre><code>
+-- 例: 口座間送金
+BEGIN TRANSACTION;
+
+UPDATE Accounts SET Balance = Balance - 100 WHERE AccountID = 123;
+UPDATE Accounts SET Balance = Balance + 100 WHERE AccountID = 456;
+
+-- 両方のUPDATEが成功した場合のみコミット
+IF @@ROWCOUNT = 2 -- (SQL Serverの例。他のDBでは異なる関数を使用)
+BEGIN
+    COMMIT;
+    PRINT '送金が完了しました。';
+END
+ELSE
+BEGIN
+    ROLLBACK;
+    PRINT '送金が失敗しました。';
+END;
+        </code></pre>
+
+        <h3>5. インデックスとパフォーマンス最適化 (概念)</h3>
+        <ul>
+            <li><strong>インデックス:</strong> データベーステーブル内のデータ検索を高速化するためのデータ構造です。本の索引のようなもので、特定の列の値から対応する行を素早く見つけ出すことができます。</li>
+            <li><strong>プライマリキーとインデックス:</strong> プライマリキーには自動的にインデックスが作成されることがほとんどです。</li>
+            <li><strong>注意点:</strong> インデックスは検索を高速化しますが、データの挿入、更新、削除のパフォーマンスを低下させる可能性があります。また、ディスク領域を消費します。適切なインデックス設計が重要です。</li>
+        </ul>
+        <p><strong>例: インデックスの作成</strong></p>
+        <pre><code>
+CREATE INDEX idx_customer_city ON Customers (City);
+CREATE UNIQUE INDEX idx_product_name ON Products (ProductName); -- ユニークインデックス
+        </code></pre>
+        <ul>
+            <li><strong>実行計画 (Execution Plan):</strong> SQLクエリがデータベースによってどのように実行されるかを示す計画です。これを分析することで、パフォーマンスのボトルネックを特定し、クエリやインデックスを最適化する手がかりを得られます。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>おわりに</h2>
+        <p>この資料を通じて、SQLの基本的な操作から、複雑なデータ分析、さらにはパフォーマンスに関わる上級テクニックまで、幅広く学習できたことと思います。</p>
+        <p>SQLは実践を通じて習熟する言語です。様々なデータセットに対して積極的にクエリを書き、試行錯誤を繰り返すことで、より深く理解し、スキルを向上させることができます。公式ドキュメントやオンラインリソースも活用し、継続的な学習をお勧めします。</p>
+        <p>Happy SQLing!</p>
+    </section>
+
+</body>
+</html>
