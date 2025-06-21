@@ -16,7 +16,7 @@
         <button class="tab-button" onclick="openTab(event, 'Intermediate')">応用編</button>
         <button class="tab-button" onclick="openTab(event, 'Advanced')">上級編</button>
     </div>
-
+  
     <div id="Beginner" class="tab-content active">
         <h2>初級編：SQL Server の基礎</h2>
 
@@ -541,8 +541,11 @@ CREATE UNIQUE NONCLUSTERED INDEX UQ_Products_ProductName ON Products (ProductNam
             <li><strong>実行計画 (Execution Plan):</strong> SQL Server Management Studio (SSMS) などで、SQLクエリがデータベースによってどのように実行されるかを示す計画です。これを分析することで、パフォーマンスのボトルネックを特定し、クエリやインデックスを最適化する手がかりを得られます。</li>
             <li><strong>統計情報:</strong> SQL Serverはインデックスや列のデータ分布に関する統計情報を保持しており、クエリオプティマイザが最適な実行計画を立てるために使用します。定期的な統計情報の更新はパフォーマンス維持に重要です。</li>
         </ul>
-    </section>
-
+    </div>
+    <div class="call-to-action">
+        <a href="../index.html">目次へ戻る</a>
+    </div>
+    
     <script>
         function openTab(evt, tabName) {
             // すべてのタブコンテンツを非表示にする

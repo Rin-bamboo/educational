@@ -214,3 +214,34 @@
             margin-left: 10px;
             display: block;
         }
+        .call-to-action {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .call-to-action a {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        .call-to-action a:hover {
+            background-color: #218838;
+        }
+
+                textarea.answer-output {
+            width: calc(100% - 20px);
+            height: 250px; /* 全体出力用は高めに */
+            padding: 10px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            background-color: #eaf6ff;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            color: #0056b3;
+            margin-top: 10px;
+        }
