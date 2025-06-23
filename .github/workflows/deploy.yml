@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir gh-pages
           cp -r release/wwwroot/* gh-pages/
-          cp gh-pages/index.html gh-pages/404.html
+          cp release/wwwroot/index.html gh-pages/404.html
           echo "" > gh-pages/.nojekyll
 
       - name: Deploy to GitHub Pages
