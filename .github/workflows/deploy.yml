@@ -19,10 +19,12 @@ jobs:
       - name: Publish .NET project
         run: dotnet publish ./EdicationSite.csproj -c Release -o release
 
-      - name: Copy wwwroot to root
+      - name: Prepare gh-pages content
         run: |
           mkdir gh-pages
           cp -r release/wwwroot/* gh-pages/
+          cp gh-pages/index.html gh-pages/404.html
+          echo "" > gh-pages/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
