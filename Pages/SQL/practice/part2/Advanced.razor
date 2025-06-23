@@ -1,0 +1,596 @@
+﻿@page "/SQL/Practice/Part2/Advanced"
+
+        <h1>SQLテスト - 上級編 (学校データベース)</h1>
+        <p>このテストは、生徒の成績履歴や欠席情報など、より詳細なデータを使用し、ウィンドウ関数、共通テーブル式（CTE）、高度なデータ更新、複雑な条件でのデータ取得といった実践的なSQLスキルを測定することを目的としています。</p>
+        <p><strong>注:</strong> 各問題の解答は、SQL Serverの構文に基づいて記述してください。</p>
+
+        <button class="test-data-button" onclick="downloadTestData()">テストデータをダウンロード (.sql)</button>
+
+        <h2>問題</h2>
+
+        <p>以下のテーブル定義とデータ（テストデータで投入されるもの）を考慮して解答してください。</p>
+
+        <div class="table-definition">
+            <h3>テーブル定義: <code>Students</code> (生徒情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    EnrollmentDate DATE,
+    Grade INT, -- 学年
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Courses</code> (科目情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY IDENTITY(1,1),
+    CourseName NVARCHAR(100) NOT NULL,
+    Credits INT, -- 単位数
+    Department NVARCHAR(50), -- 所属学科
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Enrollments</code> (受講登録情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Enrollments (
+    EnrollmentID INT PRIMARY KEY IDENTITY(1,1),
+    StudentID INT NOT NULL,
+    CourseID INT NOT NULL,
+    EnrollmentDate DATE,
+    GradeScore INT, -- 点数 (0-100)
+    Semester NVARCHAR(20), -- 'Spring', 'Fall'
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Attendance</code> (出席情報)</h3>
+            <pre>
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY IDENTITY(1,1),
+    StudentID INT NOT NULL,
+    CourseID INT NOT NULL,
+    AttendanceDate DATE NOT NULL,
+    Status NVARCHAR(20), -- 'Present', 'Absent', 'Late'
+    Reason NVARCHAR(255), -- 欠席理由など
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+            </pre>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.1 (ウィンドウ関数 - LAG/LEAD):</strong> 各生徒について、受講した科目（<code>CourseName</code>）ごとに、その科目の前の学期（`Semester`と`EnrollmentDate`で順序付け）に取得した<code>GradeScore</code>を隣接する行として表示するSQL文を記述してください。最初の学期の科目は前のスコアをNULLとします。有効な受講記録のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_1_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.2 (CTEと条件付き更新):</strong> 共通テーブル式（CTE）を使用して、**合計欠席回数**が5回を超え、かつ**全ての科目の平均点**が70点未満の有効な生徒について、その生徒の<code>Grade</code>を1段階下げるSQL文を記述してください。`UpdateUser`も適切に設定してください。（学年が1の場合はそれ以上下げない）
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_2_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.3 (複数条件のNOT EXISTS):</strong> 以下の条件を全て満たす有効な科目名（<code>CourseName</code>）を取得するSQL文を記述してください。<br>
+            - 2024年に入ってから受講登録が1件もない。<br>
+            - どの生徒からも「Absent」（欠席）と記録されたことがない。<br>
+            - 担当教員が一人も割り当てられていない。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_3_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.4 (PIVOT/CASEと集計 - 多次元集計の簡易版):</strong> 各生徒（<code>StudentID</code>, <code>FirstName</code>, <code>LastName</code>）について、科目別（`国語I`, `数学A`, `英語コミュニケーション`, `物理基礎`）の最終成績（<code>GradeScore</code>）を列として表示するSQL文を記述してください。該当科目を未受講の場合はNULLと表示し、有効な受講記録のみを対象とします。`PIVOT`句または`CASE`式と集計関数を組み合わせて使用してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_4_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.5 (ウィンドウ関数 - NTILE):</strong> 全ての有効な生徒を、学年（<code>Grade</code>）ごとに成績（<code>GradeScore</code>）の高い順に3つのグループ（1:上位、2:中位、3:下位）に分割し、各生徒の<code>FirstName</code>、<code>LastName</code>、<code>Grade</code>、<code>GradeScore</code>、およびそのグループ（タイル番号）を表示するSQL文を記述してください。特定の科目に限定せず、受講した全ての科目の平均点でグループ分けしてください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_5_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <button class="download-button" onclick="downloadUserAnswers('advanced_school')">上級編の記述回答をダウンロード (.sql)</button>
+        <button class="show-all-answers-button" onclick="downloadModelAnswers('advanced_school')">上級編の模範回答をダウンロード (.sql)</button>
+
+    
+    <script>
+        const modelAnswers_advanced_school = {
+            q3_1: `
+-- 問題 3.1 (ウィンドウ関数 - LAG/LEAD): 各生徒の前の学期の成績
+SELECT
+    S.FirstName,
+    S.LastName,
+    C.CourseName,
+    E.Semester,
+    E.GradeScore,
+    LAG(E.GradeScore, 1, NULL) OVER (
+        PARTITION BY S.StudentID
+        ORDER BY E.EnrollmentDate,
+                 CASE E.Semester WHEN N'Spring' THEN 1 WHEN N'Fall' THEN 2 END -- 学期順も考慮
+    ) AS PreviousSemesterGradeScore
+FROM
+    Students AS S
+JOIN
+    Enrollments AS E ON S.StudentID = E.StudentID
+JOIN
+    Courses AS C ON E.CourseID = C.CourseID
+WHERE
+    S.Enabled = 1 AND E.Enabled = 1 AND C.Enabled = 1
+ORDER BY
+    S.StudentID, E.EnrollmentDate, E.Semester;
+`,
+            q3_2: `
+-- 問題 3.2 (CTEと条件付き更新): 合計欠席回数と平均点に基づく学年調整
+WITH StudentSummary AS (
+    SELECT
+        S.StudentID,
+        S.Grade,
+        COUNT(CASE WHEN A.Status = N'Absent' THEN 1 ELSE NULL END) AS TotalAbsences,
+        AVG(E.GradeScore * 1.0) AS AverageGradeScore
+    FROM
+        Students AS S
+    LEFT JOIN
+        Attendance AS A ON S.StudentID = A.StudentID AND A.Enabled = 1
+    LEFT JOIN
+        Enrollments AS E ON S.StudentID = E.StudentID AND E.Enabled = 1
+    WHERE
+        S.Enabled = 1
+    GROUP BY
+        S.StudentID, S.Grade
+    HAVING
+        COUNT(CASE WHEN A.Status = N'Absent' THEN 1 ELSE NULL END) > 5 -- 欠席回数が5回を超える
+        AND AVG(E.GradeScore * 1.0) < 70 -- 平均点が70点未満
+)
+UPDATE S
+SET
+    S.Grade = CASE WHEN SS.Grade > 1 THEN SS.Grade - 1 ELSE SS.Grade END, -- 学年が1の場合は下げない
+    S.UpdateDate = GETDATE(),
+    S.UpdateUser = N'AutoGradeAdjuster'
+FROM
+    Students AS S
+JOIN
+    StudentSummary AS SS ON S.StudentID = SS.StudentID
+WHERE
+    S.Enabled = 1;
+`,
+            q3_3: `
+-- 問題 3.3 (複数条件のNOT EXISTS): 特定条件を満たす科目名を取得
+SELECT
+    C.CourseName
+FROM
+    Courses AS C
+WHERE
+    C.Enabled = 1
+    -- 2024年に入ってから受講登録が1件もない
+    AND NOT EXISTS (
+        SELECT 1
+        FROM Enrollments AS E
+        WHERE E.CourseID = C.CourseID
+          AND E.Enabled = 1
+          AND YEAR(E.EnrollmentDate) = 2024
+    )
+    -- どの生徒からも「Absent」（欠席）と記録されたことがない
+    AND NOT EXISTS (
+        SELECT 1
+        FROM Attendance AS A
+        WHERE A.CourseID = C.CourseID
+          AND A.Enabled = 1
+          AND A.Status = N'Absent'
+    )
+    -- 担当教員が一人も割り当てられていない
+    AND NOT EXISTS (
+        SELECT 1
+        FROM CourseAssignments AS CA
+        WHERE CA.CourseID = C.CourseID
+          AND CA.Enabled = 1
+    )
+ORDER BY
+    C.CourseName;
+`,
+            q3_4: `
+-- 問題 3.4 (PIVOT/CASEと集計 - 多次元集計の簡易版): 生徒の科目別最終成績
+SELECT
+    S.StudentID,
+    S.FirstName,
+    S.LastName,
+    [国語I],
+    [数学A],
+    [英語コミュニケーション],
+    [物理基礎]
+FROM
+    Students AS S
+JOIN (
+    SELECT
+        E.StudentID,
+        C.CourseName,
+        E.GradeScore
+    FROM
+        Enrollments AS E
+    JOIN
+        Courses AS C ON E.CourseID = C.CourseID
+    WHERE
+        E.Enabled = 1 AND C.Enabled = 1
+) AS SourceTable
+PIVOT (
+    MAX(GradeScore) -- 各生徒・科目ペアの最後の成績（ここでは重複がないと仮定）
+    FOR CourseName IN ([国語I], [数学A], [英語コミュニケーション], [物理基礎])
+) AS PivotTable ON S.StudentID = PivotTable.StudentID
+WHERE
+    S.Enabled = 1
+ORDER BY
+    S.LastName, S.FirstName;
+
+/*
+-- CASE 式を使用する場合の例:
+SELECT
+    S.StudentID,
+    S.FirstName,
+    S.LastName,
+    MAX(CASE WHEN C.CourseName = N'国語I' THEN E.GradeScore ELSE NULL END) AS 国語I,
+    MAX(CASE WHEN C.CourseName = N'数学A' THEN E.GradeScore ELSE NULL END) AS 数学A,
+    MAX(CASE WHEN C.CourseName = N'英語コミュニケーション' THEN E.GradeScore ELSE NULL END) AS 英語コミュニケーション,
+    MAX(CASE WHEN C.CourseName = N'物理基礎' THEN E.GradeScore ELSE NULL END) AS 物理基礎
+FROM
+    Students AS S
+LEFT JOIN
+    Enrollments AS E ON S.StudentID = E.StudentID AND E.Enabled = 1
+LEFT JOIN
+    Courses AS C ON E.CourseID = C.CourseID AND C.Enabled = 1
+WHERE
+    S.Enabled = 1
+GROUP BY
+    S.StudentID, S.FirstName, S.LastName
+ORDER BY
+    S.LastName, S.FirstName;
+*/
+`,
+            q3_5: `
+-- 問題 3.5 (ウィンドウ関数 - NTILE): 学年ごとの成績上位/中位/下位グループ分け
+WITH StudentAverageScore AS (
+    SELECT
+        S.StudentID,
+        S.FirstName,
+        S.LastName,
+        S.Grade,
+        ISNULL(AVG(E.GradeScore * 1.0), 0) AS AverageOverallScore
+    FROM
+        Students AS S
+    LEFT JOIN
+        Enrollments AS E ON S.StudentID = E.StudentID AND E.Enabled = 1
+    WHERE
+        S.Enabled = 1
+    GROUP BY
+        S.StudentID, S.FirstName, S.LastName, S.Grade
+)
+SELECT
+    SAS.FirstName,
+    SAS.LastName,
+    SAS.Grade,
+    SAS.AverageOverallScore,
+    NTILE(3) OVER (PARTITION BY SAS.Grade ORDER BY SAS.AverageOverallScore DESC) AS GradeGroup
+FROM
+    StudentAverageScore AS SAS
+ORDER BY
+    SAS.Grade, GradeGroup, SAS.AverageOverallScore DESC;
+`
+        };
+
+        function downloadUserAnswers(level) {
+            let combinedUserAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'advanced_school') {
+                filename = `sql_test_school_advanced_my_answers_${timestamp}.sql`;
+                combinedUserAnswers += `-- SQLテスト - 上級編 (学校データベース - 記述回答) ${new Date().toLocaleString()}\n\n`;
+                combinedUserAnswers += `-- 問題 3.1 (ウィンドウ関数 - LAG/LEAD)\n` + document.getElementById('q3_1_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.2 (CTEと条件付き更新)\n` + document.getElementById('q3_2_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.3 (複数条件のNOT EXISTS)\n` + document.getElementById('q3_3_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.4 (PIVOT/CASEと集計 - 多次元集計の簡易版)\n` + document.getElementById('q3_4_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.5 (ウィンドウ関数 - NTILE)\n` + document.getElementById('q3_5_input').value.trim() + '\n';
+            }
+
+            const headerLength = (`-- SQLテスト - 上級編 (学校データベース - 記述回答) `.length + new Date().toLocaleString().length + 2);
+            if (combinedUserAnswers.trim().length <= headerLength) {
+                alert('回答が記述されていません。');
+                return;
+            }
+
+            const blob = new Blob([combinedUserAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadModelAnswers(level) {
+            let combinedAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'advanced_school') {
+                filename = `sql_test_school_advanced_model_answers_${timestamp}.sql`;
+                combinedAnswers += `-- SQLテスト - 上級編 (学校データベース - 模範回答) ${new Date().toLocaleString()}\n\n`;
+                combinedAnswers += modelAnswers_advanced_school.q3_1 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_school.q3_2 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_school.q3_3 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_school.q3_4 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_school.q3_5 + '\n';
+            }
+
+            const blob = new Blob([combinedAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadTestData() {
+            const testDataSql = `
+-- テストデータ投入用SQLスクリプト (上級編 - 学校データベース)
+-- 注意: 既にデータが存在する場合は重複する可能性があります。
+-- 必要に応じて TRUNCATE TABLE または DELETE FROM で既存データをクリアしてください。
+
+-- 既存テーブルの削除（依存関係に注意）
+IF OBJECT_ID('Attendance', 'U') IS NOT NULL DROP TABLE Attendance;
+IF OBJECT_ID('Enrollments', 'U') IS NOT NULL DROP TABLE Enrollments;
+IF OBJECT_ID('CourseAssignments', 'U') IS NOT NULL DROP TABLE CourseAssignments;
+IF OBJECT_ID('Students', 'U') IS NOT NULL DROP TABLE Students;
+IF OBJECT_ID('Courses', 'U') IS NOT NULL DROP TABLE Courses;
+IF OBJECT_ID('Teachers', 'U') IS NOT NULL DROP TABLE Teachers;
+
+-- Students テーブル作成 (再掲)
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    EnrollmentDate DATE,
+    Grade INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Courses テーブル作成 (再掲)
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY IDENTITY(1,1),
+    CourseName NVARCHAR(100) NOT NULL,
+    Credits INT,
+    Department NVARCHAR(50),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Teachers テーブル作成 (再掲)
+CREATE TABLE Teachers (
+    TeacherID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100),
+    HireDate DATE,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Enrollments テーブル作成 (再掲)
+CREATE TABLE Enrollments (
+    EnrollmentID INT PRIMARY KEY IDENTITY(1,1),
+    StudentID INT NOT NULL,
+    CourseID INT NOT NULL,
+    EnrollmentDate DATE,
+    GradeScore INT,
+    Semester NVARCHAR(20),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+-- CourseAssignments テーブル作成 (再掲)
+CREATE TABLE CourseAssignments (
+    AssignmentID INT PRIMARY KEY IDENTITY(1,1),
+    TeacherID INT NOT NULL,
+    CourseID INT NOT NULL,
+    AssignmentDate DATE,
+    Semester NVARCHAR(20),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (TeacherID) REFERENCES Teachers(TeacherID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+-- Attendance テーブル作成
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY IDENTITY(1,1),
+    StudentID INT NOT NULL,
+    CourseID INT NOT NULL,
+    AttendanceDate DATE NOT NULL,
+    Status NVARCHAR(20),
+    Reason NVARCHAR(255),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+PRINT N'-- 上級編テストデータ挿入開始 (学校データベース) --';
+
+-- Students データ
+SET IDENTITY_INSERT Students ON;
+INSERT INTO Students (StudentID, FirstName, LastName, DateOfBirth, EnrollmentDate, Grade, Enabled, UpdateUser) VALUES
+(1, N'山田', N'太郎', '2008-07-20', '2021-04-01', 9, 1, N'Loader'),
+(2, N'鈴木', N'一郎', '2009-03-10', '2022-04-01', 8, 1, N'Loader'),
+(3, N'佐藤', N'美咲', '2007-11-05', '2020-04-01', 10, 1, N'Loader'),
+(4, N'高橋', N'健太', '2008-09-25', '2021-04-01', 9, 1, N'Loader'),
+(5, N'伊藤', N'さくら', '2009-01-01', '2022-04-01', 8, 1, N'Loader'), -- 問題3.2用：欠席が多く平均点低い生徒
+(6, N'渡辺', N'花子', '2008-06-01', '2021-04-01', 9, 1, N'Loader');
+SET IDENTITY_INSERT Students OFF;
+
+-- Courses データ
+SET IDENTITY_INSERT Courses ON;
+INSERT INTO Courses (CourseID, CourseName, Credits, Department, Enabled, UpdateUser) VALUES
+(101, N'国語I', 4, N'人文科学', 1, N'Loader'),
+(102, N'数学A', 3, N'理数系', 1, N'Loader'),
+(103, N'英語コミュニケーション', 2, N'人文科学', 1, N'Loader'),
+(104, N'物理基礎', 3, N'理数系', 1, N'Loader'),
+(105, N'日本史B', 4, N'社会科学', 1, N'Loader'),
+(106, N'化学II', 3, N'理数系', 1, N'Loader'), -- 2024年登録なし、欠席なし、教員割り当てなしテスト用
+(107, N'保健体育', 2, N'体育', 1, N'Loader');
+SET IDENTITY_INSERT Courses OFF;
+
+-- Teachers データ
+SET IDENTITY_INSERT Teachers ON;
+INSERT INTO Teachers (TeacherID, FirstName, LastName, Specialty, HireDate, Enabled, UpdateUser) VALUES
+(1, N'田中', N'啓太', N'国語', '2018-04-01', 1, N'Loader'),
+(2, N'中村', N'由美', N'数学', '2019-09-01', 1, N'Loader'),
+(3, N'小林', N'大輔', N'社会', '2022-04-01', 1, N'Loader'),
+(4, N'吉田', N'彩香', N'体育', '2020-04-01', 1, N'Loader');
+SET IDENTITY_INSERT Teachers OFF;
+
+-- Enrollments データ
+SET IDENTITY_INSERT Enrollments ON;
+INSERT INTO Enrollments (EnrollmentID, StudentID, CourseID, EnrollmentDate, GradeScore, Semester, Enabled, UpdateUser) VALUES
+-- 山田太郎 (StudentID: 1)
+(1, 1, 101, '2023-04-05', 85, N'Spring', 1, N'Loader'),
+(2, 1, 102, '2023-04-05', 78, N'Spring', 1, N'Loader'),
+(3, 1, 103, '2023-09-10', 88, N'Fall', 1, N'Loader'),
+(4, 1, 104, '2024-04-01', 70, N'Spring', 1, N'Loader'),
+
+-- 鈴木一郎 (StudentID: 2)
+(5, 2, 101, '2023-04-05', 92, N'Spring', 1, N'Loader'),
+(6, 2, 103, '2023-04-05', 70, N'Spring', 1, N'Loader'),
+(7, 2, 102, '2023-09-10', 80, N'Fall', 1, N'Loader'),
+(8, 2, 104, '2024-04-01', 85, N'Spring', 1, N'Loader'),
+
+-- 佐藤美咲 (StudentID: 3)
+(9, 3, 104, '2023-09-10', 95, N'Fall', 1, N'Loader'),
+(10, 3, 101, '2024-04-01', 82, N'Spring', 1, N'Loader'),
+
+-- 高橋健太 (StudentID: 4)
+(11, 4, 102, '2023-09-10', 65, N'Fall', 1, N'Loader'),
+(12, 4, 103, '2024-04-01', 75, N'Spring', 1, N'Loader'),
+
+-- 伊藤さくら (StudentID: 5) - 欠席多、成績低め
+(13, 5, 101, '2023-04-05', 60, N'Spring', 1, N'Loader'),
+(14, 5, 102, '2023-04-05', 55, N'Spring', 1, N'Loader'),
+(15, 5, 103, '2023-09-10', 62, N'Fall', 1, N'Loader');
+
+-- 渡辺花子 (StudentID: 6) - 問題3.5用
+(16, 6, 101, '2023-04-05', 90, N'Spring', 1, N'Loader'),
+(17, 6, 102, '2023-04-05', 85, N'Spring', 1, N'Loader');
+SET IDENTITY_INSERT Enrollments OFF;
+
+-- CourseAssignments データ
+SET IDENTITY_INSERT CourseAssignments ON;
+INSERT INTO CourseAssignments (AssignmentID, TeacherID, CourseID, AssignmentDate, Semester, Enabled, UpdateUser) VALUES
+(1, 1, 101, '2023-03-20', N'Spring', 1, N'Loader'),
+(2, 2, 102, '2023-03-20', N'Spring', 1, N'Loader'),
+(3, 1, 103, '2023-03-20', N'Spring', 1, N'Loader'),
+(4, 2, 104, '2023-03-20', N'Spring', 1, N'Loader'),
+(5, 3, 105, '2023-03-20', N'Spring', 1, N'Loader'),
+(6, 1, 101, '2023-09-01', N'Fall', 1, N'Loader'),
+(7, 2, 102, '2023-09-01', N'Fall', 1, N'Loader'),
+(8, 3, 104, '2023-09-01', N'Fall', 1, N'Loader'),
+(9, 2, 101, '2024-03-01', N'Spring', 1, N'Loader'); -- 2024年割り当て
+SET IDENTITY_INSERT CourseAssignments OFF;
+
+-- Attendance データ
+SET IDENTITY_INSERT Attendance ON;
+INSERT INTO Attendance (AttendanceID, StudentID, CourseID, AttendanceDate, Status, Reason, Enabled, UpdateUser) VALUES
+-- 伊藤さくら (StudentID: 5) - 欠席多め
+(1, 5, 101, '2023-04-10', N'Absent', N'体調不良', 1, N'Loader'),
+(2, 5, 101, '2023-04-17', N'Absent', N'家族旅行', 1, N'Loader'),
+(3, 5, 102, '2023-04-11', N'Absent', N'寝坊', 1, N'Loader'),
+(4, 5, 102, '2023-04-18', N'Absent', N'体調不良', 1, N'Loader'),
+(5, 5, 103, '2023-09-15', N'Absent', N'私用', 1, N'Loader'),
+(6, 5, 103, '2023-09-22', N'Absent', N'体調不良', 1, N'Loader'),
+
+-- その他の生徒の欠席（少数）
+(7, 1, 102, '2023-04-10', N'Absent', N'体調不良', 1, N'Loader'),
+(8, 2, 101, '2023-04-11', N'Late', N'交通遅延', 1, N'Loader'),
+(9, 3, 104, '2023-09-12', N'Absent', N'体調不良', 1, N'Loader');
+
+-- 問題3.3用: CourseID 106 (化学II) には欠席記録がないことを確認
+-- INSERT INTO Attendance (AttendanceID, StudentID, CourseID, AttendanceDate, Status, Reason, Enabled, UpdateUser) VALUES
+-- (10, 1, 106, '2024-05-01', N'Absent', N'テスト用', 1, N'Loader'); -- これを入れると条件に合致しなくなる
+SET IDENTITY_INSERT Attendance OFF;
+
+PRINT N'-- 上級編テストデータ挿入完了 (学校データベース) --';
+            `;
+
+            const blob = new Blob([testDataSql.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sql_test_school_advanced_data_setup_${timestamp}.sql`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+
+
+@code {
+
+}

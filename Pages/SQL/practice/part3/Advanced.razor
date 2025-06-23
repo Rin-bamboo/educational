@@ -1,0 +1,632 @@
+﻿@page "/SQL/Practice/Part3/Advanced"
+
+        <h1>SQLテスト - 上級編 (病院データベース)</h1>
+        <p>このテストは、患者の治療履歴、過去の診察回数、特定の条件に基づく患者抽出、複雑な集計や更新など、実践的なSQLスキルを測定することを目的としています。</p>
+        <p><strong>注:</strong> 各問題の解答は、SQL Serverの構文に基づいて記述してください。</p>
+
+        <button class="test-data-button" onclick="downloadTestData()">テストデータをダウンロード (.sql)</button>
+
+        <h2>問題</h2>
+
+        <p>以下のテーブル定義とデータ（テストデータで投入されるもの）を考慮して解答してください。</p>
+
+        <div class="table-definition">
+            <h3>テーブル定義: <code>Patients</code> (患者情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    Gender NVARCHAR(10),
+    ContactPhone NVARCHAR(20),
+    LastVisitDate DATETIME, -- 最終診察日 (新規追加)
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Doctors</code> (医師情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100),
+    LicenseNumber NVARCHAR(50) UNIQUE,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>MedicalRecords</code> (診察記録 - 再掲)</h3>
+            <pre>
+CREATE TABLE MedicalRecords (
+    RecordID INT PRIMARY KEY IDENTITY(1,1),
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    ExaminationDate DATETIME NOT NULL,
+    Diagnosis NVARCHAR(255),
+    TreatmentNotes NVARCHAR(MAX),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>LabResults</code> (検査結果)</h3>
+            <pre>
+CREATE TABLE LabResults (
+    ResultID INT PRIMARY KEY IDENTITY(1,1),
+    RecordID INT NOT NULL,
+    TestName NVARCHAR(100) NOT NULL,
+    ResultValue NVARCHAR(255), -- 数値、文字列、範囲など
+    ResultUnit NVARCHAR(50),
+    ResultDate DATETIME NOT NULL,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (RecordID) REFERENCES MedicalRecords(RecordID)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>HospitalRooms</code> (病室情報)</h3>
+            <pre>
+CREATE TABLE HospitalRooms (
+    RoomID INT PRIMARY KEY IDENTITY(1,1),
+    RoomNumber NVARCHAR(20) NOT NULL UNIQUE,
+    RoomType NVARCHAR(50), -- 'Private', 'Shared'
+    Capacity INT,
+    CurrentOccupancy INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.1 (CTEとウィンドウ関数 - 連続する訪問):</strong> 共通テーブル式（CTE）とウィンドウ関数（<code>LEAD</code>/<code>LAG</code>または<code>ROW_NUMBER</code>と日付関数）を使用して、同じ患者が30日以内に連続して診察を受けた記録のペア（最初の診察日と次の診察日）を全て取得するSQL文を記述してください。有効な診察記録のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_1_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.2 (UPDATE FROMとサブクエリ):</strong> <code>Patients</code>テーブルの<code>LastVisitDate</code>カラムを、各患者の最新の有効な診察日（<code>MedicalRecords.ExaminationDate</code>の最新値）で更新するSQL文を記述してください。診察記録がない患者は<code>NULL</code>のままにするか、変更しないようにしてください。<code>UpdateUser</code>も適切に設定してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_2_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.3 (条件付き集計とPIVOT/CASE):</strong> 各患者（<code>PatientID</code>, <code>FirstName</code>, <code>LastName</code>）について、特定の検査結果（`血糖値`, `コレステロール`, `血圧`）の最新の<code>ResultValue</code>を列として表示するSQL文を記述してください。該当する検査結果がない場合はNULLと表示してください。有効な検査結果のみを対象とし、`PIVOT`句または`CASE`式と集計関数を組み合わせて使用してください。（<code>ResultValue</code>は文字列型ですが、ここでは単純に表示するだけでよいとします。）
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_3_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.4 (複雑なEXISTS/NOT EXISTS):</strong> 以下の条件を全て満たす有効な医師の<code>FirstName</code>、<code>LastName</code>、<code>Specialty</code>を取得するSQL文を記述してください。<br>
+            - 2025年中に少なくとも5人の異なる患者を診察した。<br>
+            - 診察した患者の中に、性別が'Male'でかつ診断名が'骨折'である患者がいない。<br>
+            - 専門分野が'内科'である。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_4_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 3.5 (トランザクションと複数テーブル更新):</strong> 新しい病室（`RoomNumber`: 'A-101', `RoomType`: 'Private', `Capacity`: 1, `CurrentOccupancy`: 0）を<code>HospitalRooms</code>テーブルに登録します。同時に、この新しい病室タイプ（'Private'）の部屋の料金を20%値上げする更新を<code>MedicalRecords</code>（ただし、診察記録には病室情報は直接ないため、ここでは概念的な問題とします。例えば、`TreatmentNotes`に料金を記述していると仮定するか、新しい`Bills`テーブルのようなものがある場合。）**ここでは、概念的な課題として、`HospitalRooms`への挿入と、特定の条件を満たす既存の`Doctors`の給与を更新する、という2つの操作をトランザクションで行うことに変更します。**<br>
+            新しい病室を登録し、**専門分野が'内科'の有効な医師全員の給与を5%増額する**一連の処理を、**トランザクション**を用いて記述してください。両方の操作が成功した場合のみ確定し、片方でも失敗した場合は全てロールバックされるようにしてください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q3_5_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <button class="download-button" onclick="downloadUserAnswers('advanced_hospital')">上級編の記述回答をダウンロード (.sql)</button>
+        <button class="show-all-answers-button" onclick="downloadModelAnswers('advanced_hospital')">上級編の模範回答をダウンロード (.sql)</button>
+
+    
+    <script>
+        const modelAnswers_advanced_hospital = {
+            q3_1: `
+-- 問題 3.1 (CTEとウィンドウ関数 - 連続する訪問): 同じ患者が30日以内に連続して診察を受けた記録のペア
+WITH PatientVisits AS (
+    SELECT
+        RecordID,
+        PatientID,
+        ExaminationDate,
+        ROW_NUMBER() OVER (PARTITION BY PatientID ORDER BY ExaminationDate) AS Rn,
+        LEAD(ExaminationDate, 1) OVER (PARTITION BY PatientID ORDER BY ExaminationDate) AS NextVisitDate
+    FROM
+        MedicalRecords
+    WHERE
+        Enabled = 1
+)
+SELECT
+    PV.PatientID,
+    P.FirstName,
+    P.LastName,
+    PV.ExaminationDate AS FirstVisitDate,
+    PV.NextVisitDate AS SecondVisitDate,
+    DATEDIFF(day, PV.ExaminationDate, PV.NextVisitDate) AS DaysBetweenVisits
+FROM
+    PatientVisits AS PV
+JOIN
+    Patients AS P ON PV.PatientID = P.PatientID
+WHERE
+    PV.NextVisitDate IS NOT NULL
+    AND DATEDIFF(day, PV.ExaminationDate, PV.NextVisitDate) <= 30
+ORDER BY
+    PV.PatientID, PV.ExaminationDate;
+`,
+            q3_2: `
+-- 問題 3.2 (UPDATE FROMとサブクエリ): PatientsテーブルのLastVisitDateを更新
+UPDATE P
+SET
+    P.LastVisitDate = LatestVisit.MaxExaminationDate,
+    P.UpdateDate = GETDATE(),
+    P.UpdateUser = N'LastVisitUpdater'
+FROM
+    Patients AS P
+JOIN (
+    SELECT
+        PatientID,
+        MAX(ExaminationDate) AS MaxExaminationDate
+    FROM
+        MedicalRecords
+    WHERE
+        Enabled = 1
+    GROUP BY
+        PatientID
+) AS LatestVisit ON P.PatientID = LatestVisit.PatientID
+WHERE
+    P.Enabled = 1
+    -- 患者の既存のLastVisitDateがNULLの場合も更新、または古い場合のみ更新
+    AND (P.LastVisitDate IS NULL OR P.LastVisitDate < LatestVisit.MaxExaminationDate);
+`,
+            q3_3: `
+-- 問題 3.3 (条件付き集計とPIVOT/CASE): 各患者の特定の検査結果
+SELECT
+    P.PatientID,
+    P.FirstName,
+    P.LastName,
+    [血糖値],
+    [コレステロール],
+    [血圧]
+FROM
+    Patients AS P
+LEFT JOIN (
+    SELECT
+        MR.PatientID,
+        LR.TestName,
+        LR.ResultValue,
+        ROW_NUMBER() OVER (PARTITION BY MR.PatientID, LR.TestName ORDER BY LR.ResultDate DESC) AS rn -- 最新の検査結果を取得
+    FROM
+        MedicalRecords AS MR
+    JOIN
+        LabResults AS LR ON MR.RecordID = LR.RecordID
+    WHERE
+        MR.Enabled = 1 AND LR.Enabled = 1
+) AS SourceData ON P.PatientID = SourceData.PatientID AND SourceData.rn = 1
+PIVOT (
+    MAX(ResultValue)
+    FOR TestName IN ([血糖値], [コレステロール], [血圧])
+) AS PivotTable ON P.PatientID = PivotTable.PatientID
+WHERE
+    P.Enabled = 1
+ORDER BY
+    P.LastName, P.FirstName;
+
+/*
+-- CASE 式を使用する場合の例:
+SELECT
+    P.PatientID,
+    P.FirstName,
+    P.LastName,
+    MAX(CASE WHEN LR.TestName = N'血糖値' THEN LR.ResultValue ELSE NULL END) AS 血糖値,
+    MAX(CASE WHEN LR.TestName = N'コレステロール' THEN LR.ResultValue ELSE NULL END) AS コレステロール,
+    MAX(CASE WHEN LR.TestName = N'血圧' THEN LR.ResultValue ELSE NULL END) AS 血圧
+FROM
+    Patients AS P
+LEFT JOIN
+    MedicalRecords AS MR ON P.PatientID = MR.PatientID AND MR.Enabled = 1
+LEFT JOIN
+    LabResults AS LR ON MR.RecordID = LR.RecordID AND LR.Enabled = 1
+WHERE
+    P.Enabled = 1
+GROUP BY
+    P.PatientID, P.FirstName, P.LastName
+ORDER BY
+    P.LastName, P.FirstName;
+*/
+`,
+            q3_4: `
+-- 問題 3.4 (複雑なEXISTS/NOT EXISTS): 特定の条件を満たす医師を取得
+SELECT
+    D.FirstName,
+    D.LastName,
+    D.Specialty
+FROM
+    Doctors AS D
+WHERE
+    D.Enabled = 1
+    AND D.Specialty = N'内科'
+    -- 2025年中に少なくとも5人の異なる患者を診察した
+    AND (
+        SELECT COUNT(DISTINCT MR.PatientID)
+        FROM MedicalRecords AS MR
+        WHERE MR.DoctorID = D.DoctorID
+          AND MR.Enabled = 1
+          AND YEAR(MR.ExaminationDate) = 2025
+    ) >= 5
+    -- 診察した患者の中に、性別が'Male'でかつ診断名が'骨折'である患者がいない
+    AND NOT EXISTS (
+        SELECT 1
+        FROM MedicalRecords AS MR_Inner
+        JOIN Patients AS P_Inner ON MR_Inner.PatientID = P_Inner.PatientID
+        WHERE MR_Inner.DoctorID = D.DoctorID
+          AND MR_Inner.Enabled = 1 AND P_Inner.Enabled = 1
+          AND P_Inner.Gender = N'Male'
+          AND MR_Inner.Diagnosis = N'骨折'
+    )
+ORDER BY
+    D.LastName, D.FirstName;
+`,
+            q3_5: `
+-- 問題 3.5 (トランザクションと複数テーブル更新): 新規病室登録と医師給与増額
+BEGIN TRANSACTION;
+BEGIN TRY
+    DECLARE @@NewRoomNumber NVARCHAR(20) = N'A-101';
+    DECLARE @@NewRoomType NVARCHAR(50) = N'Private';
+    DECLARE @@NewCapacity INT = 1;
+    DECLARE @@UpdateUser NVARCHAR(50) = N'SystemAdmin';
+
+    -- 新しい病室をHospitalRoomsテーブルに登録
+    INSERT INTO HospitalRooms (RoomNumber, RoomType, Capacity, CurrentOccupancy, Enabled, UpdateUser)
+    VALUES (@@NewRoomNumber, @@NewRoomType, @@NewCapacity, 0, 1, @@UpdateUser);
+
+    -- 専門分野が'内科'の有効な医師全員の給与を5%増額
+    UPDATE Doctors
+    SET
+        Salary = Salary * 1.05,
+        UpdateDate = GETDATE(),
+        UpdateUser = @@UpdateUser
+    WHERE
+        Specialty = N'内科' AND Enabled = 1;
+
+    COMMIT TRANSACTION;
+    PRINT N'トランザクションが正常にコミットされました。';
+END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION;
+    PRINT N'トランザクションがロールバックされました。エラー: ' + ERROR_MESSAGE();
+    -- 必要であれば、ここでエラーログ記録など
+END CATCH;
+`
+        };
+
+        function downloadUserAnswers(level) {
+            let combinedUserAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'advanced_hospital') {
+                filename = `sql_test_hospital_advanced_my_answers_${timestamp}.sql`;
+                combinedUserAnswers += `-- SQLテスト - 上級編 (病院データベース - 記述回答) ${new Date().toLocaleString()}\n\n`;
+                combinedUserAnswers += `-- 問題 3.1 (CTEとウィンドウ関数 - 連続する訪問)\n` + document.getElementById('q3_1_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.2 (UPDATE FROMとサブクエリ)\n` + document.getElementById('q3_2_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.3 (条件付き集計とPIVOT/CASE)\n` + document.getElementById('q3_3_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.4 (複雑なEXISTS/NOT EXISTS)\n` + document.getElementById('q3_4_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 3.5 (トランザクションと複数テーブル更新)\n` + document.getElementById('q3_5_input').value.trim() + '\n';
+            }
+
+            const headerLength = (`-- SQLテスト - 上級編 (病院データベース - 記述回答) `.length + new Date().toLocaleString().length + 2);
+            if (combinedUserAnswers.trim().length <= headerLength) {
+                alert('回答が記述されていません。');
+                return;
+            }
+
+            const blob = new Blob([combinedUserAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadModelAnswers(level) {
+            let combinedAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'advanced_hospital') {
+                filename = `sql_test_hospital_advanced_model_answers_${timestamp}.sql`;
+                combinedAnswers += `-- SQLテスト - 上級編 (病院データベース - 模範回答) ${new Date().toLocaleString()}\n\n`;
+                combinedAnswers += modelAnswers_advanced_hospital.q3_1 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_hospital.q3_2 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_hospital.q3_3 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_hospital.q3_4 + '\n---\n';
+                combinedAnswers += modelAnswers_advanced_hospital.q3_5 + '\n';
+            }
+
+            const blob = new Blob([combinedAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadTestData() {
+            const testDataSql = `
+-- テストデータ投入用SQLスクリプト (上級編 - 病院データベース)
+-- 注意: 既にデータが存在する場合は重複する可能性があります。
+-- 必要に応じて TRUNCATE TABLE または DELETE FROM で既存データをクリアしてください。
+
+-- 既存テーブルの削除（依存関係に注意）
+IF OBJECT_ID('LabResults', 'U') IS NOT NULL DROP TABLE LabResults;
+IF OBJECT_ID('Appointments', 'U') IS NOT NULL DROP TABLE Appointments;
+IF OBJECT_ID('Prescriptions', 'U') IS NOT NULL DROP TABLE Prescriptions; -- 中級編のPrescriptionsも依存関係にある
+IF OBJECT_ID('MedicalRecords', 'U') IS NOT NULL DROP TABLE MedicalRecords;
+IF OBJECT_ID('HospitalRooms', 'U') IS NOT NULL DROP TABLE HospitalRooms; -- 新規テーブル
+IF OBJECT_ID('Medications', 'U') IS NOT NULL DROP TABLE Medications; -- 中級編のMedicationsも依存関係にある
+IF OBJECT_ID('Patients', 'U') IS NOT NULL DROP TABLE Patients;
+IF OBJECT_ID('Doctors', 'U') IS NOT NULL DROP TABLE Doctors;
+
+-- Patients テーブル作成 (再掲、LastVisitDate追加)
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    Gender NVARCHAR(10),
+    ContactPhone NVARCHAR(20),
+    LastVisitDate DATETIME, -- 最終診察日 (新規追加)
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Doctors テーブル作成 (再掲)
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100),
+    LicenseNumber NVARCHAR(50) UNIQUE,
+    Salary DECIMAL(10, 2) DEFAULT 5000000.00, -- 給与を追加 (問題3.5用)
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- MedicalRecords テーブル作成 (再掲)
+CREATE TABLE MedicalRecords (
+    RecordID INT PRIMARY KEY IDENTITY(1,1),
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    ExaminationDate DATETIME NOT NULL,
+    Diagnosis NVARCHAR(255),
+    TreatmentNotes NVARCHAR(MAX),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+-- LabResults テーブル作成
+CREATE TABLE LabResults (
+    ResultID INT PRIMARY KEY IDENTITY(1,1),
+    RecordID INT NOT NULL,
+    TestName NVARCHAR(100) NOT NULL,
+    ResultValue NVARCHAR(255),
+    ResultUnit NVARCHAR(50),
+    ResultDate DATETIME NOT NULL,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (RecordID) REFERENCES MedicalRecords(RecordID)
+);
+
+-- HospitalRooms テーブル作成
+CREATE TABLE HospitalRooms (
+    RoomID INT PRIMARY KEY IDENTITY(1,1),
+    RoomNumber NVARCHAR(20) NOT NULL UNIQUE,
+    RoomType NVARCHAR(50),
+    Capacity INT,
+    CurrentOccupancy INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- 以下は中級編で定義したテーブルだが、依存関係があるためテストデータに含める
+-- Medications テーブル作成
+CREATE TABLE Medications (
+    MedicationID INT PRIMARY KEY IDENTITY(1,1),
+    MedicationName NVARCHAR(100) NOT NULL,
+    Manufacturer NVARCHAR(100),
+    PricePerUnit DECIMAL(10, 2),
+    StockQuantity INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Prescriptions テーブル作成
+CREATE TABLE Prescriptions (
+    PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
+    RecordID INT NOT NULL,
+    MedicationID INT NOT NULL,
+    Dosage NVARCHAR(50),
+    Quantity INT NOT NULL,
+    PrescriptionDate DATETIME NOT NULL,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (RecordID) REFERENCES MedicalRecords(RecordID),
+    FOREIGN KEY (MedicationID) REFERENCES Medications(MedicationID)
+);
+
+-- Appointments テーブル作成 (初級編から再掲。今回の問題には直接使われないが、他で参照される可能性あり)
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY IDENTITY(1,1),
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    AppointmentDateTime DATETIME NOT NULL,
+    Reason NVARCHAR(255),
+    Status NVARCHAR(20),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+
+PRINT N'-- 上級編テストデータ挿入開始 (病院データベース) --';
+
+-- Patients データ
+SET IDENTITY_INSERT Patients ON;
+INSERT INTO Patients (PatientID, FirstName, LastName, DateOfBirth, Gender, ContactPhone, LastVisitDate, Enabled, UpdateUser) VALUES
+(1, N'山田', N'太郎', '1975-03-10', N'Male', N'090-1111-2222', '2025-05-10 10:00:00', 1, N'Loader'),
+(2, N'鈴木', N'花子', '1985-05-20', N'Female', N'080-3333-4444', '2025-05-15 11:00:00', 1, N'Loader'),
+(3, N'佐藤', N'一郎', '1968-11-15', N'Male', N'070-5555-6666', '2025-05-20 09:30:00', 1, N'Loader'),
+(4, N'田中', N'美穂', '1995-01-01', N'Female', N'090-7777-8888', '2025-05-25 14:00:00', 1, N'Loader'),
+(5, N'高橋', N'健太', '1960-04-25', N'Male', N'080-9999-0000', '2025-06-01 09:00:00', 1, N'Loader'), -- 診察あり、LastVisitDate更新対象
+(6, N'小林', N'由紀', '2000-10-10', N'Female', N'070-1234-5678', NULL, 1, N'Loader'), -- 診察なし、LastVisitDate NULLのまま
+(7, N'中村', N'勇気', '1980-01-01', N'Male', N'090-2222-1111', '2025-05-01 10:00:00', 1, N'Loader'); -- 診察あり
+SET IDENTITY_INSERT Patients OFF;
+
+-- Doctors データ
+SET IDENTITY_INSERT Doctors ON;
+INSERT INTO Doctors (DoctorID, FirstName, LastName, Specialty, LicenseNumber, Salary, Enabled, UpdateUser) VALUES
+(1, N'森田', N'健一', N'内科', N'MD001', 6000000.00, 1, N'Loader'),
+(2, N'加藤', N'さやか', N'外科', N'MD002', 7000000.00, 1, N'Loader'),
+(3, N'山本', N'大輔', N'小児科', N'MD003', 5500000.00, 1, N'Loader'),
+(4, N'吉田', N'麻美', N'眼科', N'MD004', 6200000.00, 1, N'Loader'),
+(5, N'佐々木', N'亮太', N'内科', N'MD005', 6300000.00, 1, N'Loader'), -- 内科医追加 (問題3.5用)
+(6, N'渡辺', N'直美', N'皮膚科', N'MD006', 5000000.00, 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Doctors OFF;
+
+-- MedicalRecords データ
+SET IDENTITY_INSERT MedicalRecords ON;
+INSERT INTO MedicalRecords (RecordID, PatientID, DoctorID, ExaminationDate, Diagnosis, TreatmentNotes, Enabled, UpdateUser) VALUES
+(1, 1, 1, '2025-01-10 10:00:00', N'高血圧', N'血圧測定', 1, N'Loader'),
+(2, 1, 1, '2025-02-05 10:30:00', N'高血圧', N'薬処方', 1, N'Loader'), -- 山田太郎の連続診察1
+(3, 1, 1, '2025-02-20 11:00:00', N'高血圧', N'経過観察', 1, N'Loader'), -- 山田太郎の連続診察2 (30日以内)
+(4, 2, 2, '2025-01-15 11:00:00', N'骨折', N'ギプス交換', 1, N'Loader'),
+(5, 3, 1, '2025-01-20 09:30:00', N'風邪', N'安静', 1, N'Loader'),
+(6, 4, 3, '2025-02-01 14:00:00', N'予防接種', N'定期接種', 1, N'Loader'),
+(7, 5, 1, '2025-03-01 09:00:00', N'糖尿病', N'インスリン処方', 1, N'Loader'), -- 高橋健太
+(8, 7, 5, '2025-03-05 10:00:00', N'アレルギー', N'薬処方', 1, N'Loader'), -- 中村勇気
+(9, 1, 1, '2024-12-01 09:00:00', N'風邪', N'投薬', 1, N'Loader'), -- 2024年の診察
+(10, 2, 2, '2025-04-01 10:00:00', N'骨折', N'リハビリ', 0, N'Loader'), -- 論理削除済み
+(11, 3, 2, '2025-03-01 11:00:00', N'骨折', N'リハビリ', 1, N'Loader'); -- 佐藤一郎の骨折
+SET IDENTITY_INSERT MedicalRecords OFF;
+
+-- LabResults データ
+SET IDENTITY_INSERT LabResults ON;
+INSERT INTO LabResults (ResultID, RecordID, TestName, ResultValue, ResultUnit, ResultDate, Enabled, UpdateUser) VALUES
+(1, 1, N'血糖値', N'120', N'mg/dL', '2025-01-10 10:15:00', 1, N'Loader'),
+(2, 1, N'コレステロール', N'200', N'mg/dL', '2025-01-10 10:15:00', 1, N'Loader'),
+(3, 2, N'血糖値', N'115', N'mg/dL', '2025-02-05 10:45:00', 1, N'Loader'),
+(4, 3, N'血圧', N'130/80', N'mmHg', '2025-02-20 11:15:00', 1, N'Loader'),
+(5, 4, N'コレステロール', N'210', N'mg/dL', '2025-01-15 11:30:00', 1, N'Loader'),
+(6, 5, N'血糖値', N'130', N'mg/dL', '2025-01-20 09:45:00', 1, N'Loader'),
+(7, 5, N'血圧', N'140/90', N'mmHg', '2025-01-20 09:45:00', 1, N'Loader'),
+(8, 7, N'血糖値', N'150', N'mg/dL', '2025-03-01 09:15:00', 1, N'Loader'); -- 高橋健太の検査結果
+SET IDENTITY_INSERT LabResults OFF;
+
+-- HospitalRooms データ (問題3.5用、既存データ)
+SET IDENTITY_INSERT HospitalRooms ON;
+INSERT INTO HospitalRooms (RoomID, RoomNumber, RoomType, Capacity, CurrentOccupancy, Enabled, UpdateUser) VALUES
+(1, N'A-201', N'Shared', 4, 3, 1, N'Loader'),
+(2, N'B-305', N'Private', 1, 1, 1, N'Loader');
+SET IDENTITY_INSERT HospitalRooms OFF;
+
+-- Appointments テーブルのデータ (他の中級編や初級編で定義済みのため、存在すればスキップ)
+-- 今回の上級編の問題には直接使われないが、テストデータの整合性を保つため
+IF OBJECT_ID('Appointments', 'U') IS NOT NULL
+BEGIN
+    INSERT INTO Appointments (PatientID, DoctorID, AppointmentDateTime, Reason, Status, Enabled, UpdateUser)
+    VALUES
+    (1, 1, '2025-06-20 10:00:00', N'風邪', N'Scheduled', 1, N'Loader');
+END;
+
+-- Medications テーブルのデータ (他の中級編で定義済みのため、存在すればスキップ)
+IF OBJECT_ID('Medications', 'U') IS NOT NULL
+BEGIN
+    INSERT INTO Medications (MedicationID, MedicationName, Manufacturer, PricePerUnit, StockQuantity, Enabled, UpdateUser)
+    VALUES
+    (101, N'解熱剤A', N'製薬A', 100.00, 200, 1, N'Loader');
+END;
+
+-- Prescriptions テーブルのデータ (他の中級編で定義済みのため、存在すればスキップ)
+IF OBJECT_ID('Prescriptions', 'U') IS NOT NULL
+BEGIN
+    INSERT INTO Prescriptions (PrescriptionID, RecordID, MedicationID, Dosage, Quantity, PrescriptionDate, Enabled, UpdateUser)
+    VALUES
+    (1, 1, 101, N'1日3回1錠', 9, '2025-01-10 10:15:00', 1, N'Loader');
+END;
+
+PRINT N'-- 上級編テストデータ挿入完了 (病院データベース) --';
+            `;
+
+            const blob = new Blob([testDataSql.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sql_test_hospital_advanced_data_setup_${timestamp}.sql`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+
+@code {
+
+}

@@ -1,0 +1,61 @@
+﻿<div class="top-row ps-3 navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand text-light" href="">EdicationSite</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable bg-light" @onclick="ToggleNavMenu">
+    <nav class="nav flex-column">
+        <a class="nav-link active" aria-current="page" href="intro/SiteOverview">Webサイトの概要</a>
+        <a class="nav-link" href="intro/HowToUse">利用ガイド</a>
+        <hr class="dropdown-divider" />
+        <a class="nav-link" href="CSharp/Program01">C#入門</a>
+        <a class="nav-link" href="CSharp/Program02">C#応用</a>
+        <a class="nav-link" href="CSharp/Program03">C#WPFとWinForms</a>
+        <a class="nav-link" href="CSharp/Program04">C#ASP.NET Core</a>
+        <a class="nav-link" href="CSharp/Razor">C#Razor</a>
+
+        <hr class="dropdown-divider" />
+        <a class="nav-link" href="/VB/IntroVBA">VBA入門</a>
+        <a class="nav-link" href="/VB/VBDotNet">VB.NET WebForms</a>
+
+        <hr class="dropdown-divider"/>
+        <a class="nav-link" href="SQL/SQLEdication">SQL教育資料</a>
+
+        <hr class="dropdown-divider" />
+        <a class="nav-link" href="SQL/Practice/Part1/Beginner">SQLテストPart1.初級</a>
+        <a class="nav-link" href="SQL/Practice/Part1/Intermediate">SQLテストPart1.中級</a>
+        <a class="nav-link" href="SQL/Practice/Part1/Advanced">SQLテストPart1.上級</a>
+
+        <hr class="dropdown-divider" />
+        <a class="nav-link" href="SQL/Practice/Part2/Beginner">SQLテストPart2.初級</a>
+        <a class="nav-link" href="SQL/Practice/Part2/Intermediate">SQLテストPart2.中級</a>
+        <a class="nav-link" href="SQL/Practice/Part2/Advanced">SQLテストPart2.上級</a>
+
+        <hr class="dropdown-divider" />
+        <a class="nav-link" href="SQL/Practice/Part3/Beginner">SQLテストPart3.初級</a>
+        <a class="nav-link" href="SQL/Practice/Part3/Intermediate">SQLテストPart3.中級</a>
+        <a class="nav-link" href="SQL/Practice/Part3/Advanced">SQLテストPart3.上級</a>
+
+
+        <hr class="dropdown-divider" />
+        <a class="nav-link" href="Git/IntroGit">Git入門</a>
+
+        <hr class="dropdown-divider" />
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

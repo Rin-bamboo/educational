@@ -1,0 +1,466 @@
+﻿@page "/SQL/Practice/Part3/Intermediate"
+
+        <h1>SQLテスト - 中級編 (病院データベース)</h1>
+        <p>このテストは、診察記録や処方箋データを使用し、結合、集計、サブクエリ、条件付き取得といった応用的なSQL操作を測定することを目的としています。</p>
+        <p><strong>注:</strong> 各問題の解答は、SQL Serverの構文に基づいて記述してください。</p>
+
+        <button class="test-data-button" onclick="downloadTestData()">テストデータをダウンロード (.sql)</button>
+
+        <h2>問題</h2>
+
+        <p>以下のテーブル定義をもとに、各問題に解答してください。</p>
+
+        <div class="table-definition">
+            <h3>テーブル定義: <code>Patients</code> (患者情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    Gender NVARCHAR(10),
+    ContactPhone NVARCHAR(20),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Doctors</code> (医師情報 - 再掲)</h3>
+            <pre>
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100),
+    LicenseNumber NVARCHAR(50) UNIQUE,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>MedicalRecords</code> (診察記録)</h3>
+            <pre>
+CREATE TABLE MedicalRecords (
+    RecordID INT PRIMARY KEY IDENTITY(1,1),
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    ExaminationDate DATETIME NOT NULL,
+    Diagnosis NVARCHAR(255), -- 診断名
+    TreatmentNotes NVARCHAR(MAX), -- 治療内容のメモ
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Medications</code> (薬品情報)</h3>
+            <pre>
+CREATE TABLE Medications (
+    MedicationID INT PRIMARY KEY IDENTITY(1,1),
+    MedicationName NVARCHAR(100) NOT NULL,
+    Manufacturer NVARCHAR(100),
+    PricePerUnit DECIMAL(10, 2),
+    StockQuantity INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Prescriptions</code> (処方箋)</h3>
+            <pre>
+CREATE TABLE Prescriptions (
+    PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
+    RecordID INT NOT NULL,
+    MedicationID INT NOT NULL,
+    Dosage NVARCHAR(50), -- 用量
+    Quantity INT NOT NULL, -- 処方量
+    PrescriptionDate DATETIME NOT NULL,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (RecordID) REFERENCES MedicalRecords(RecordID),
+    FOREIGN KEY (MedicationID) REFERENCES Medications(MedicationID)
+);
+            </pre>
+        </div>
+
+        <div class="question">
+            <strong>問題 2.1:</strong> 各医師（<code>DoctorID</code>, <code>FirstName</code>, <code>LastName</code>）が担当した有効な診察記録の件数を専門分野（<code>Specialty</code>）ごとに取得し、診察件数が多い専門分野順に表示するSQL文を記述してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q2_1_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 2.2:</strong> <code>Patients</code>、<code>MedicalRecords</code>、<code>Doctors</code>の3つのテーブルを結合し、'インフルエンザ'と診断された患者の<code>FirstName</code>、<code>LastName</code>、診察を行った医師の<code>FirstName</code>、<code>LastName</code>、および診察日（<code>ExaminationDate</code>）を取得するSQL文を記述してください。有効な診察記録のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q2_2_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 2.3:</strong> 2025年中に少なくとも1回の診察記録があり、かつ50歳以上の有効な患者の<code>PatientID</code>、<code>FirstName</code>、<code>LastName</code>を取得するSQL文を記述してください。サブクエリを使用して、条件を満たす患者を抽出してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q2_3_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 2.4:</strong> 各薬品（<code>MedicationName</code>）ごとに、処方された総数量（<code>Quantity</code>の合計）と、その薬品の在庫数量（<code>StockQuantity</code>）の合計を取得するSQL文を記述してください。処方されていない薬品も表示し、その場合は処方量を0と表示してください。有効な薬品のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q2_4_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 2.5:</strong> <code>Medications</code>テーブルの在庫数量（<code>StockQuantity</code>）を更新します。各薬品について、その薬品の総処方量（<code>Prescriptions</code>テーブルの<code>Quantity</code>合計）が現在の在庫数量の半分を超えている場合に、在庫数量を**2倍**にするSQL文を記述してください。（<code>UpdateUser</code>も適切に設定してください）。有効な薬品のみを対象とします。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q2_5_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <button class="download-button" onclick="downloadUserAnswers('intermediate_hospital')">中級編の記述回答をダウンロード (.sql)</button>
+        <button class="show-all-answers-button" onclick="downloadModelAnswers('intermediate_hospital')">中級編の模範回答をダウンロード (.sql)</button>
+    
+    <script>
+        const modelAnswers_intermediate_hospital = {
+            q2_1: `
+-- 問題 2.1: 各医師が担当した有効な診察記録の件数を専門分野ごとに取得
+SELECT
+    D.Specialty,
+    D.FirstName,
+    D.LastName,
+    COUNT(MR.RecordID) AS NumberOfConsultations
+FROM
+    Doctors AS D
+LEFT JOIN
+    MedicalRecords AS MR ON D.DoctorID = MR.DoctorID AND MR.Enabled = 1
+WHERE
+    D.Enabled = 1
+GROUP BY
+    D.Specialty, D.FirstName, D.LastName
+ORDER BY
+    D.Specialty, NumberOfConsultations DESC;
+`,
+            q2_2: `
+-- 問題 2.2: 'インフルエンザ'と診断された患者と医師の情報を取得
+SELECT
+    P.FirstName AS PatientFirstName,
+    P.LastName AS PatientLastName,
+    D.FirstName AS DoctorFirstName,
+    D.LastName AS DoctorLastName,
+    MR.ExaminationDate
+FROM
+    Patients AS P
+JOIN
+    MedicalRecords AS MR ON P.PatientID = MR.PatientID AND MR.Enabled = 1
+JOIN
+    Doctors AS D ON MR.DoctorID = D.DoctorID
+WHERE
+    P.Enabled = 1 AND D.Enabled = 1 AND MR.Diagnosis = N'インフルエンザ';
+`,
+            q2_3: `
+-- 問題 2.3: 2025年中に診察記録があり、かつ50歳以上の有効な患者
+SELECT
+    P.PatientID,
+    P.FirstName,
+    P.LastName
+FROM
+    Patients AS P
+WHERE
+    P.Enabled = 1
+    AND (YEAR(GETDATE()) - YEAR(P.DateOfBirth)) >= 50 -- 簡易的な年齢計算
+    AND P.PatientID IN (
+        SELECT DISTINCT PatientID
+        FROM MedicalRecords
+        WHERE Enabled = 1 AND YEAR(ExaminationDate) = 2025
+    )
+ORDER BY
+    P.LastName, P.FirstName;
+`,
+            q2_4: `
+-- 問題 2.4: 各薬品の総処方量と在庫数量の合計 (処方されていない薬品も含む)
+SELECT
+    M.MedicationName,
+    ISNULL(SUM(P.Quantity), 0) AS TotalPrescribedQuantity,
+    M.StockQuantity AS CurrentStock
+FROM
+    Medications AS M
+LEFT JOIN
+    Prescriptions AS P ON M.MedicationID = P.MedicationID AND P.Enabled = 1
+WHERE
+    M.Enabled = 1
+GROUP BY
+    M.MedicationID, M.MedicationName, M.StockQuantity
+ORDER BY
+    TotalPrescribedQuantity DESC, M.MedicationName;
+`,
+            q2_5: `
+-- 問題 2.5: 総処方量が在庫の半分を超えている薬品の在庫を2倍に更新
+UPDATE M
+SET
+    M.StockQuantity = M.StockQuantity * 2,
+    M.UpdateDate = GETDATE(),
+    M.UpdateUser = N'StockAutoUpdater'
+FROM
+    Medications AS M
+JOIN (
+    SELECT
+        MedicationID,
+        SUM(Quantity) AS TotalPrescribed
+    FROM
+        Prescriptions
+    WHERE Enabled = 1
+    GROUP BY
+        MedicationID
+) AS PrescribedSummary ON M.MedicationID = PrescribedSummary.MedicationID
+WHERE
+    M.Enabled = 1
+    AND PrescribedSummary.TotalPrescribed > (M.StockQuantity / 2.0); -- 小数点以下も考慮
+`
+        };
+
+        function downloadUserAnswers(level) {
+            let combinedUserAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'intermediate_hospital') {
+                filename = `sql_test_hospital_intermediate_my_answers_${timestamp}.sql`;
+                combinedUserAnswers += `-- SQLテスト - 中級編 (病院データベース - 記述回答) ${new Date().toLocaleString()}\n\n`;
+                combinedUserAnswers += `-- 問題 2.1\n` + document.getElementById('q2_1_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 2.2\n` + document.getElementById('q2_2_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 2.3\n` + document.getElementById('q2_3_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 2.4\n` + document.getElementById('q2_4_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 2.5\n` + document.getElementById('q2_5_input').value.trim() + '\n';
+            }
+
+            const headerLength = (`-- SQLテスト - 中級編 (病院データベース - 記述回答) `.length + new Date().toLocaleString().length + 2);
+            if (combinedUserAnswers.trim().length <= headerLength) {
+                alert('回答が記述されていません。');
+                return;
+            }
+
+            const blob = new Blob([combinedUserAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadModelAnswers(level) {
+            let combinedAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'intermediate_hospital') {
+                filename = `sql_test_hospital_intermediate_model_answers_${timestamp}.sql`;
+                combinedAnswers += `-- SQLテスト - 中級編 (病院データベース - 模範回答) ${new Date().toLocaleString()}\n\n`;
+                combinedAnswers += modelAnswers_intermediate_hospital.q2_1 + '\n---\n';
+                combinedAnswers += modelAnswers_intermediate_hospital.q2_2 + '\n---\n';
+                combinedAnswers += modelAnswers_intermediate_hospital.q2_3 + '\n---\n';
+                combinedAnswers += modelAnswers_intermediate_hospital.q2_4 + '\n---\n';
+                combinedAnswers += modelAnswers_intermediate_hospital.q2_5 + '\n';
+            }
+
+            const blob = new Blob([combinedAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadTestData() {
+            const testDataSql = `
+-- テストデータ投入用SQLスクリプト (中級編 - 病院データベース)
+-- 注意: 既にデータが存在する場合は重複する可能性があります。
+-- 必要に応じて TRUNCATE TABLE または DELETE FROM で既存データをクリアしてください。
+
+-- 既存テーブルの削除（依存関係に注意）
+IF OBJECT_ID('Prescriptions', 'U') IS NOT NULL DROP TABLE Prescriptions;
+IF OBJECT_ID('MedicalRecords', 'U') IS NOT NULL DROP TABLE MedicalRecords;
+IF OBJECT_ID('Medications', 'U') IS NOT NULL DROP TABLE Medications;
+IF OBJECT_ID('Patients', 'U') IS NOT NULL DROP TABLE Patients;
+IF OBJECT_ID('Doctors', 'U') IS NOT NULL DROP TABLE Doctors;
+
+-- Patients テーブル作成 (再掲)
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    Gender NVARCHAR(10),
+    ContactPhone NVARCHAR(20),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Doctors テーブル作成 (再掲)
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100),
+    LicenseNumber NVARCHAR(50) UNIQUE,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- MedicalRecords テーブル作成
+CREATE TABLE MedicalRecords (
+    RecordID INT PRIMARY KEY IDENTITY(1,1),
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    ExaminationDate DATETIME NOT NULL,
+    Diagnosis NVARCHAR(255),
+    TreatmentNotes NVARCHAR(MAX),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+-- Medications テーブル作成
+CREATE TABLE Medications (
+    MedicationID INT PRIMARY KEY IDENTITY(1,1),
+    MedicationName NVARCHAR(100) NOT NULL,
+    Manufacturer NVARCHAR(100),
+    PricePerUnit DECIMAL(10, 2),
+    StockQuantity INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Prescriptions テーブル作成
+CREATE TABLE Prescriptions (
+    PrescriptionID INT PRIMARY KEY IDENTITY(1,1),
+    RecordID INT NOT NULL,
+    MedicationID INT NOT NULL,
+    Dosage NVARCHAR(50),
+    Quantity INT NOT NULL,
+    PrescriptionDate DATETIME NOT NULL,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50),
+    FOREIGN KEY (RecordID) REFERENCES MedicalRecords(RecordID),
+    FOREIGN KEY (MedicationID) REFERENCES Medications(MedicationID)
+);
+
+PRINT N'-- 中級編テストデータ挿入開始 (病院データベース) --';
+
+-- Patients データ
+SET IDENTITY_INSERT Patients ON;
+INSERT INTO Patients (PatientID, FirstName, LastName, DateOfBirth, Gender, ContactPhone, Enabled, UpdateUser) VALUES
+(1, N'山田', N'太郎', '1975-03-10', N'Male', N'090-1111-2222', 1, N'Loader'),
+(2, N'鈴木', N'花子', '1985-05-20', N'Female', N'080-3333-4444', 1, N'Loader'),
+(3, N'佐藤', N'一郎', '1968-11-15', N'Male', N'070-5555-6666', 1, N'Loader'),
+(4, N'田中', N'美穂', '1995-01-01', N'Female', N'090-7777-8888', 1, N'Loader'),
+(5, N'高橋', N'健太', '1960-04-25', N'Male', N'080-9999-0000', 1, N'Loader'), -- 50歳以上
+(6, N'小林', N'由紀', '2000-10-10', N'Female', N'070-1234-5678', 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Patients OFF;
+
+-- Doctors データ
+SET IDENTITY_INSERT Doctors ON;
+INSERT INTO Doctors (DoctorID, FirstName, LastName, Specialty, LicenseNumber, Enabled, UpdateUser) VALUES
+(1, N'森田', N'健一', N'内科', N'MD001', 1, N'Loader'),
+(2, N'加藤', N'さやか', N'外科', N'MD002', 1, N'Loader'),
+(3, N'山本', N'大輔', N'小児科', N'MD003', 1, N'Loader'),
+(4, N'吉田', N'麻美', N'眼科', N'MD004', 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Doctors OFF;
+
+-- MedicalRecords データ
+SET IDENTITY_INSERT MedicalRecords ON;
+INSERT INTO MedicalRecords (RecordID, PatientID, DoctorID, ExaminationDate, Diagnosis, TreatmentNotes, Enabled, UpdateUser) VALUES
+(1, 1, 1, '2025-01-10 10:00:00', N'風邪', N'安静、投薬', 1, N'Loader'),
+(2, 2, 1, '2025-01-15 11:00:00', N'定期検診', N'問題なし', 1, N'Loader'),
+(3, 3, 2, '2025-01-20 09:30:00', N'骨折', N'ギプス固定', 1, N'Loader'),
+(4, 1, 3, '2025-02-01 14:00:00', N'インフルエンザ', N'抗ウイルス薬処方', 1, N'Loader'),
+(5, 4, 1, '2025-02-05 15:00:00', N'高血圧', N'経過観察', 1, N'Loader'),
+(6, 5, 1, '2025-03-01 09:00:00', N'糖尿病', N'食事指導', 1, N'Loader'),
+(7, 1, 1, '2024-12-20 10:00:00', N'風邪', N'薬処方', 1, N'Loader'), -- 2024年の診察
+(8, 2, 2, '2025-01-25 10:30:00', N'捻挫', N'湿布', 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT MedicalRecords OFF;
+
+-- Medications データ
+SET IDENTITY_INSERT Medications ON;
+INSERT INTO Medications (MedicationID, MedicationName, Manufacturer, PricePerUnit, StockQuantity, Enabled, UpdateUser) VALUES
+(101, N'解熱剤A', N'製薬A', 100.00, 200, 1, N'Loader'),
+(102, N'抗生物質B', N'製薬B', 250.00, 100, 1, N'Loader'),
+(103, N'胃薬C', N'製薬C', 50.00, 50, 1, N'Loader'),
+(104, N'高血圧治療薬D', N'製薬D', 500.00, 30, 1, N'Loader'), -- 総処方量 > 在庫/2 のテスト用 (後で処方量を設定)
+(105, N'湿布E', N'製薬E', 300.00, 10, 1, N'Loader'), -- 処方なしのテスト用
+(106, N'ビタミンF', N'製薬F', 20.00, 500, 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Medications OFF;
+
+-- Prescriptions データ
+SET IDENTITY_INSERT Prescriptions ON;
+INSERT INTO Prescriptions (PrescriptionID, RecordID, MedicationID, Dosage, Quantity, PrescriptionDate, Enabled, UpdateUser) VALUES
+(1, 1, 101, N'1日3回1錠', 9, '2025-01-10 10:15:00', 1, N'Loader'),
+(2, 1, 103, N'1日2回1包', 6, '2025-01-10 10:15:00', 1, N'Loader'),
+(3, 2, 101, N'必要時', 3, '2025-01-15 11:15:00', 1, N'Loader'),
+(4, 3, 102, N'1日2回1錠', 14, '2025-01-20 09:45:00', 1, N'Loader'),
+(5, 4, 101, N'1日3回1錠', 15, '2025-02-01 14:15:00', 1, N'Loader'),
+(6, 4, 102, N'1日1回1錠', 7, '2025-02-01 14:15:00', 1, N'Loader'),
+(7, 5, 104, N'1日1回1錠', 10, '2025-02-05 15:15:00', 1, N'Loader'), -- MedicationID 104 の合計処方量10 (在庫30の半分は15)
+(8, 6, 104, N'1日1回1錠', 8, '2025-03-01 09:15:00', 1, N'Loader'), -- MedicationID 104 の合計処方量18 (在庫30の半分を超えた)
+(9, 8, 102, N'1日2回1錠', 10, '2025-01-25 10:45:00', 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Prescriptions OFF;
+
+PRINT N'-- 中級編テストデータ挿入完了 (病院データベース) --';
+            `;
+
+            const blob = new Blob([testDataSql.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sql_test_hospital_intermediate_data_setup_${timestamp}.sql`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+
+@code {
+
+}
