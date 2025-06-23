@@ -19,6 +19,9 @@ jobs:
       - name: Publish .NET project
         run: dotnet publish ./EdicationSite.csproj -c Release -o release
 
+      - name: Show publish output root
+        run: ls -l ./bin/Release/net8.0/publish/
+
       - name: Prepare gh-pages content
         run: |
           mkdir gh-pages
