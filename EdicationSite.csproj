@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputPath>bin\Release\net8.0\publish\</OutputPath>
+    <StaticWebAssetBasePath>BlazorOnGitHubPages</StaticWebAssetBasePath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Remove="Pages\Counter.razor" />
     <Content Remove="Pages\Home.razor" />
