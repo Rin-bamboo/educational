@@ -20,13 +20,13 @@ jobs:
         run: dotnet publish ./EdicationSite.csproj -c Release -o release
 
       - name: Show publish output root
-        run: ls -l ./bin/Release/net8.0/publish/
+        run: ls -l ./release/wwwroot
 
       - name: Prepare gh-pages content
         run: |
           mkdir gh-pages
-          cp -r ./bin/Release/net8.0/publish/net8.0/wwwroot/* gh-pages/
-          cp ./bin/Release/net8.0/publish/net8.0/wwwroot/index.html gh-pages/404.html
+          cp -r release/wwwroot/* gh-pages/
+          cp release/wwwroot/index.html gh-pages/404.html
           echo "" > gh-pages/.nojekyll
 
       - name: Deploy to GitHub Pages
