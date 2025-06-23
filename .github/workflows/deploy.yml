@@ -17,7 +17,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Publish .NET project
-        run: dotnet publish -c Release -o release
+        run: dotnet publish ./EdicationSite/EdicationSite.csproj -c Release -o release
 
       - name: Copy wwwroot to root
         run: |
