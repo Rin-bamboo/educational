@@ -1,0 +1,296 @@
+﻿@page "/CSharp/Program01"
+
+    <h1>プログラム入門：プログラミングの基礎を学ぼう！（C#版）</h1>
+    <p>この資料は、<strong>プログラミング</strong>に初めて触れる方を対象としています。プログラミングの基本的な考え方から、実際に簡単なコードを書くまでのステップを、<strong>C#（シーシャープ）</strong>のコード例を交えて分かりやすく解説していきます。</p>
+
+    <section>
+        <h2>1. プログラミングって何だろう？</h2>
+        <p><strong>プログラミング</strong>とは、コンピューターに「何を」「どのように」行ってほしいかを<strong>指示する作業</strong>のことです。これらの指示を順序立てて書いたものを「プログラム」と呼びます。</p>
+        <p>私たちの身の回りにあるスマートフォン、パソコン、家電製品、Webサイトなど、あらゆるものがプログラムによって動いています。</p>
+        <h3>なぜプログラミングを学ぶの？</h3>
+        <ul>
+            <li><strong>作業を自動化できる:</strong> 毎日手作業で繰り返している面倒な作業を、コンピューターに任せられます。</li>
+            <li><strong>新しいものを作り出せる:</strong> アプリケーション、ゲーム、Webサービスなど、アイデアを形にできます。</li>
+            <li><strong>問題解決能力が身につく:</strong> 論理的に物事を考え、問題を分解し、解決策を導き出す力が養われます。</li>
+            <li><strong>コンピューターの仕組みを理解できる:</strong> デジタル社会を生きる上で、コンピューターがどう動いているかを理解することは大きな強みになります。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>2. プログラミングを始める前の準備</h2>
+        <p>C#でプログラミングを始めるには、Microsoftが提供する開発ツールである **Visual Studio** を使うのが一般的です。</p>
+        <h3>必要なもの</h3>
+        <ul>
+            <li><strong>パソコン:</strong> Windows、macOS、Linuxのどれでも構いません。</li>
+            <li>
+                <strong>Visual Studio:</strong>
+                <ul>
+                    <li>Windowsユーザーは **Visual Studio Community Edition** (無料版) をインストールするのが最も簡単です。インストール時に「.NET デスクトップ開発」ワークロードを選択してください。</li>
+                    <li>macOSやLinuxユーザーは **Visual Studio Code** (無料の軽量エディタ) と **.NET SDK** をインストールして利用できます。</li>
+                </ul>
+            </li>
+            <li><strong>インターネット接続:</strong> 情報収集やツールダウンロードのために必要です。</li>
+            <li><strong>やる気と好奇心:</strong> これが一番重要です！</li>
+        </ul>
+        <h3>おすすめの学習方法</h3>
+        <ul>
+            <li><strong>実際に手を動かす:</strong> コードを書いて、エラーが出てもめげずに修正することが大切です。</li>
+            <li><strong>小さな目標から始める:</strong> 最初から複雑なものを作ろうとせず、簡単なプログラムから始めましょう。</li>
+            <li><strong>エラーを恐れない:</strong> エラーは上達のためのヒントです。エラーメッセージを読み、解決策を探すことで学習が深まります。</li>
+            <li><strong>質問する:</strong> 詰まったら、インターネット検索を活用したり、詳しい人に質問したりしましょう。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>3. プログラミングの基本的な考え方</h2>
+        <p>どんなプログラミング言語でも共通する、重要な考え方があります。</p>
+        <h3>3.1. 順次処理（順番に実行）</h3>
+        <p>プログラムは、書かれたコードの<strong>上から下へ、左から右へ</strong>、順番に実行されます。</p>
+        <div class="example-code">
+            <p>例: 朝のルーティン</p>
+            <ol>
+                <li>目を覚ます</li>
+                <li>顔を洗う</li>
+                <li>歯を磨く</li>
+                <li>朝食を食べる</li>
+            </ol>
+            <p>これは上から順番に実行されますね。</p>
+        </div>
+
+        <h3>3.2. 条件分岐（もし〜ならば）</h3>
+        <p>ある条件が満たされた場合にだけ、特定の処理を実行させたいときに使います。「もし〇〇ならば、この処理をする。そうでなければ、別の処理をする」という考え方です。</p>
+        <div class="example-code">
+            <p>例: 傘を持っていくか判断</p>
+            <ul>
+                <li>もし <strong>雨が降っている</strong> ならば、<strong>傘を持っていく</strong>。</li>
+                <li>そうでなければ、<strong>傘は持っていかない</strong>。</li>
+            </ul>
+        </div>
+
+        <h3>3.3. 繰り返し（〇〇するまでずっと）</h3>
+        <p>同じ処理を何回も繰り返したいときに使います。「〜回繰り返す」とか「〜という条件が成り立つ間、ずっと繰り返す」という考え方です。</p>
+        <div class="example-code">
+            <p>例: 10回挨拶する</p>
+            <ul>
+                <li><strong>10回</strong> 「こんにちは！」と言う。</li>
+            </ul>
+            <p>例: 目的地に着くまで歩く</p>
+            <ul>
+                <li><strong>目的地に着くまで</strong>、<strong>歩き続ける</strong>。</li>
+            </ul>
+        </div>
+
+        <h3>3.4. 変数（データをしまっておく箱）</h3>
+        <p>プログラムの中で一時的にデータを保存しておくための「名前が付いた箱」のようなものです。数値、文字、真偽（はい/いいえ）など、様々な種類のデータを入れられます。</p>
+        <div class="example-code">
+            <p>例: 名前の箱、年齢の箱</p>
+            <ul>
+                <li>「名前」という箱に「太郎」と入れる。</li>
+                <li>「年齢」という箱に「30」と入れる。</li>
+            </ul>
+            <p>後でその箱の中身を取り出して使ったり、新しいものに入れ替えたりできます。</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>データ型（C#）</th>
+                    <th>説明</th>
+                    <th>例</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>string</code></td>
+                    <td>文字列</td>
+                    <td><code>"こんにちは"</code>, <code>"C#"</code></td>
+                </tr>
+                <tr>
+                    <td><code>int</code></td>
+                    <td>整数</td>
+                    <td><code>10</code>, <code>-5</code></td>
+                </tr>
+                <tr>
+                    <td><code>double</code></td>
+                    <td>小数（浮動小数点数）</td>
+                    <td><code>3.14</code>, <code>99.5</code></td>
+                </tr>
+                <tr>
+                    <td><code>bool</code></td>
+                    <td>真偽値（<code>true</code> または <code>false</code>）</td>
+                    <td><code>true</code>, <code>false</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>4. 実際にC#コードを書いてみよう</h2>
+        <p>C#で簡単なプログラムを作成し、実行してみましょう。Visual Studioで「コンソールアプリ (.NET Coreまたは.NET)」プロジェクトを作成して試すことができます。</p>
+        <div class="note">
+            <p><strong>C#の基本的な構造:</strong> C#のプログラムは、通常、<code>class</code>（クラス）の中に<code>Main</code>メソッド（プログラムの開始地点）があり、その中に処理を記述します。</p>
+            <pre><code class="language-csharp">using System; // 基本的な機能を使うための宣言
+
+namespace MyFirstProgram // プログラムのまとまり（名前空間）
+{
+    class Program // プログラムの本体（クラス）
+    {
+        static void Main(string[] args) // プログラムが最初に実行される場所
+        {
+            // ここにコードを書きます
+        }
+    }
+}
+                </code></pre>
+            <p>最近の.NETのバージョン（.NET 6以降）では、この基本的な構造がより簡潔に記述できる「トップレベルステートメント」が導入されています。以下の例ではその形式で記述します。</p>
+            <pre><code class="language-csharp">// トップレベルステートメントの例
+Console.WriteLine("Hello World!");
+// Mainメソッドやクラスの定義なしで直接コードを書ける
+                </code></pre>
+        </div>
+
+        <h3>4.1. Hello World! (最初のプログラム)</h3>
+        <p>画面に「Hello World!」と表示させるプログラムを書いてみましょう。</p>
+        <div class="example-code">
+            <pre><code class="language-csharp">Console.WriteLine("Hello World!");
+                </code></pre>
+            <p><strong>解説:</strong></p>
+            <ul>
+                <li><code>Console.WriteLine()</code> は、カッコの中身を画面（コンソール）に表示するための命令です。表示後、自動的に改行されます。</li>
+                <li><code>"Hello World!"</code> のように二重引用符で囲んだ部分は、<strong>文字列（文字の並び）</strong>を表します。</li>
+                <li>各行の終わりにはセミコロン (<code>;</code>) をつけます。これはC#のルールです。</li>
+            </ul>
+        </div>
+
+        <h3>4.2. 変数を使ってみよう</h3>
+        <p>先ほど学んだ「変数」を使って、名前と年齢を表示するプログラムを書いてみましょう。</p>
+        <div class="example-code">
+            <pre><code class="language-csharp">// 変数を定義（型名 変数名 = 初期値;）
+string name = "山田太郎";
+int age = 25;
+
+// 変数を使ってメッセージを表示
+Console.WriteLine("私の名前は " + name + " です。");
+Console.WriteLine("年齢は " + age + " 歳です。");
+
+// 変数の値を変更
+age = age + 1; // または age++;
+Console.WriteLine("来年の年齢は " + age + " 歳になります。");
+                </code></pre>
+            <p><strong>解説:</strong></p>
+            <ul>
+                <li><code>string name = "山田太郎";</code> のように、変数を宣言する際にその<strong>データ型</strong>（<code>string</code>や<code>int</code>など）を指定します。</li>
+                <li>文字列と変数を連結するには、<code>+</code> 演算子を使います。</li>
+                <li><code>//</code> の後ろに書かれた部分は<strong>コメント</strong>です。プログラムの実行には影響せず、コードの説明のために使われます。</li>
+            </ul>
+        </div>
+
+        <h3>4.3. 条件分岐を使ってみよう</h3>
+        <p>入力された年齢に応じて異なるメッセージを表示するプログラムです。</p>
+        <div class="example-code">
+            <pre><code class="language-csharp">// ユーザーから年齢を入力してもらう
+Console.Write("あなたの年齢を入力してください: ");
+string ageStr = Console.ReadLine(); // 入力された値は文字列として受け取る
+
+// 文字列を整数に変換する
+int age = int.Parse(ageStr);
+
+// 条件分岐
+if (age &gt;= 20)
+{
+    Console.WriteLine("あなたは成人です。");
+}
+else
+{
+    Console.WriteLine("あなたは未成年です。");
+}
+
+Console.WriteLine("プログラムが終了しました。");
+                </code></pre>
+            <p><strong>解説:</strong></p>
+            <ul>
+                <li><code>Console.Write()</code>: 画面に文字を表示しますが、改行はしません。（ユーザーが同じ行に入力できるように）</li>
+                <li><code>Console.ReadLine()</code>: ユーザーからの入力を受け取るための命令です。入力された値は必ず<strong>文字列</strong>として扱われます。</li>
+                <li><code>int.Parse(ageStr)</code>: 文字列 (<code>ageStr</code>) を<strong>整数</strong>に変換するための命令です。これにより、<code>age >= 20</code> のような数値の比較ができるようになります。</li>
+                <li><code>if (条件) { ... } else { ... }</code>: もし条件が真（正しい）ならば<code>if</code>の後のブロックのコードを実行し、そうでなければ<code>else</code>の後のブロックのコードを実行します。</li>
+                <li><code>{ }</code> (波括弧): コードのまとまり（ブロック）を示します。</li>
+            </ul>
+        </div>
+
+        <h3>4.4. 繰り返しを使ってみよう</h3>
+        <p>指定した回数だけ同じ処理を繰り返すプログラムです。</p>
+        <div class="example-code">
+            <pre><code class="language-csharp">// 5回繰り返す
+for (int i = 0; i &lt; 5; i++)
+{
+    Console.WriteLine((i + 1) + "回目のメッセージです。");
+}
+
+Console.WriteLine("繰り返しが終了しました。");
+                </code></pre>
+            <p><strong>解説:</strong></p>
+            <ul>
+                <li>
+                    <code>for (初期化; 条件; 更新) { ... }</code>: 指定した回数だけ処理を繰り返すための構文です。
+                    <ul>
+                        <li><code>int i = 0;</code>: カウンター変数<code>i</code>を0で初期化します。</li>
+                        <li><code>i &lt; 5;</code>: <code>i</code>が5未満の間、繰り返しを実行します。</li>
+                        <li><code>i++</code>: 1回の繰り返しが終わるごとに<code>i</code>の値を1増やします。</li>
+                    </ul>
+                </li>
+                <li>このループでは、<code>i</code>は0, 1, 2, 3, 4と変化するので、合計5回繰り返されます。</li>
+                <li><code>(i + 1)</code>: 0から始まるので、1回目の表示にするために<code>+1</code>しています。</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>5. 次のステップへ</h2>
+        <p>この資料で、プログラミングの基本的な考え方と、簡単なC#コードの書き方を学びました。これはプログラミングのほんの入り口に過ぎません。さらに学習を進めるためのヒントをいくつかご紹介します。</p>
+        <ul>
+            <li>
+                <strong>C#のさらに進んだ概念を学ぶ:</strong>
+                <ul>
+                    <li><strong>メソッド:</strong> 複数の処理をまとめた再利用可能なブロック。</li>
+                    <li><strong>クラスとオブジェクト:</strong> C#は「オブジェクト指向プログラミング」言語であり、この概念を理解することは非常に重要です。</li>
+                    <li><strong>配列とリスト:</strong> 複数のデータをまとめて扱う方法。</li>
+                    <li><strong>例外処理:</strong> エラーが発生したときにプログラムが停止しないようにする仕組み。</li>
+                </ul>
+            </li>
+            <li>
+                <strong>他の種類のアプリケーション開発に挑戦:</strong>
+                <ul>
+                    <li><strong>Windowsデスクトップアプリ (WPF / WinForms):</strong> GUIを持つアプリケーション。</li>
+                    <li><strong>Webアプリケーション (ASP.NET Core):</strong> WebサイトやWebサービス。</li>
+                    <li><strong>モバイルアプリ (.NET MAUI):</strong> iOS/Androidアプリ。</li>
+                    <li><strong>ゲーム開発 (Unity):</strong> 有名なゲーム開発プラットフォーム。</li>
+                </ul>
+            </li>
+            <li>
+                <strong>フレームワークやライブラリを学ぶ:</strong>
+                <ul>
+                    <li>C#には開発を効率化するための豊富なライブラリがあります。例えば、データ操作のためのLINQ、Webアプリケーション開発のためのASP.NET Coreなど。</li>
+                </ul>
+            </li>
+            <li>
+                <strong>オンライン学習サイトや書籍を活用する:</strong>
+                <ul>
+                    <li>Microsoft Learn、Udemy、Courseraなどのオンライン学習プラットフォームや、C#の初心者向け書籍を活用しましょう。</li>
+                </ul>
+            </li>
+            <li>
+                <strong>小さなプロジェクトを始めてみる:</strong>
+                <ul>
+                    <li>電卓アプリ、簡単なゲーム、日記アプリ、Webサイトなど、自分で何かを作ってみるのが一番の上達法です。</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="note">
+            <p>プログラミングは、学べば学ぶほど可能性が広がる楽しい分野です。焦らず、少しずつでも毎日コードに触れてみることが、上達への一番の近道です。頑張ってください！</p>
+        </div>
+    </section>
+
+
+
+@code {
+
+}

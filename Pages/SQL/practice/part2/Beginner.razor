@@ -1,0 +1,322 @@
+﻿@page "/SQL/Practice/Part2/Beginner"
+
+        <h1>SQLテスト - 初級編 (学校データベース)</h1>
+        <p>このテストは、学校の生徒、科目、教員といった基本的なデータを操作し、SQLの基礎を測定することを目的としています。</p>
+        <p><strong>注:</strong> 各問題の解答は、SQL Serverの構文に基づいて記述してください。</p>
+
+        <button class="test-data-button" onclick="downloadTestData()">テストデータをダウンロード (.sql)</button>
+
+        <h2>問題</h2>
+
+        <p>以下のテーブル定義をもとに、各問題に解答してください。</p>
+
+        <div class="table-definition">
+            <h3>テーブル定義: <code>Students</code> (生徒情報)</h3>
+            <pre>
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    EnrollmentDate DATE,
+    Grade INT, -- 学年
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Courses</code> (科目情報)</h3>
+            <pre>
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY IDENTITY(1,1),
+    CourseName NVARCHAR(100) NOT NULL,
+    Credits INT, -- 単位数
+    Department NVARCHAR(50), -- 所属学科
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+
+            <h3>テーブル定義: <code>Teachers</code> (教員情報)</h3>
+            <pre>
+CREATE TABLE Teachers (
+    TeacherID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100), -- 専門分野
+    HireDate DATE,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+            </pre>
+        </div>
+
+        <div class="question">
+            <strong>問題 1.1:</strong> <code>Students</code> テーブルに、以下の生徒情報を新規登録するSQL文を記述してください。<br>
+            名: '花子', 姓: '田中', 生年月日: '2010-04-15', 入学日: '2023-04-01', 学年: 7
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q1_1_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 1.2:</strong> <code>Courses</code> テーブルから、単位数（<code>Credits</code>）が3以上の有効な科目の<code>CourseName</code>と<code>Department</code>を取得するSQL文を記述してください。
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q1_2_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 1.3:</strong> <code>Teachers</code> テーブルで、<code>TeacherID</code>が2の教員の<code>Specialty</code>を'数学'に更新するSQL文を記述してください。（<code>UpdateUser</code>も適切に設定してください）
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q1_3_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 1.4:</strong> <code>Students</code> テーブルから、学年（<code>Grade</code>）が9の生徒の<code>FirstName</code>、<code>LastName</code>、<code>DateOfBirth</code>を、生年月日が古い順（降順）で取得するSQL文を記述してください。有効な生徒のみを対象とします。
+            <div the="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q1_4_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 1.5:</strong> <code>Courses</code> テーブルから、<code>CourseID</code>が4の科目を論理削除するSQL文を記述してください。（<code>Enabled</code>を0に更新し、<code>DeleteDate</code>と<code>UpdateUser</code>も適切に設定してください）
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q1_5_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <div class="question">
+            <strong>問題 1.6:</strong> <code>Teachers</code> テーブルに、以下の教員情報を複数件一括で登録するSQL文を記述してください。<br>
+            名: 'ジョン', 姓: 'スミス', 専門分野: '英語', 採用日: '2020-09-01'<br>
+            名: 'メアリー', 姓: 'ブラウン', 専門分野: '生物学', 採用日: '2021-04-10'
+            <div class="answer-area">
+                <p>解答欄:</p>
+                <textarea class="user-input" id="q1_6_input" placeholder="ここにSQL文を記述してください。"></textarea>
+            </div>
+        </div>
+
+        <button class="download-button" onclick="downloadUserAnswers('beginner_school')">初級編の記述回答をダウンロード (.sql)</button>
+        <button class="show-all-answers-button" onclick="downloadModelAnswers('beginner_school')">初級編の模範回答をダウンロード (.sql)</button>
+
+    <script>
+        const modelAnswers_beginner_school = {
+            q1_1: `
+-- 問題 1.1: Students テーブルに新規生徒情報を登録
+INSERT INTO Students (FirstName, LastName, DateOfBirth, EnrollmentDate, Grade, UpdateUser)
+VALUES (N'花子', N'田中', '2010-04-15', '2023-04-01', 7, N'System');
+`,
+            q1_2: `
+-- 問題 1.2: Courses テーブルから単位数が3以上の有効な科目を取得
+SELECT CourseName, Department
+FROM Courses
+WHERE Credits >= 3 AND Enabled = 1;
+`,
+            q1_3: `
+-- 問題 1.3: Teachers テーブルで TeacherID が2の教員のSpecialtyを更新
+UPDATE Teachers
+SET Specialty = N'数学',
+    UpdateDate = GETDATE(),
+    UpdateUser = N'Admin'
+WHERE TeacherID = 2 AND Enabled = 1;
+`,
+            q1_4: `
+-- 問題 1.4: Students テーブルから学年が9の生徒情報を生年月日降順で取得
+SELECT FirstName, LastName, DateOfBirth
+FROM Students
+WHERE Grade = 9 AND Enabled = 1
+ORDER BY DateOfBirth DESC;
+`,
+            q1_5: `
+-- 問題 1.5: Courses テーブルから CourseID が4の科目を論理削除
+UPDATE Courses
+SET Enabled = 0,
+    DeleteDate = GETDATE(),
+    UpdateDate = GETDATE(),
+    UpdateUser = N'Admin'
+WHERE CourseID = 4;
+`,
+            q1_6: `
+-- 問題 1.6: Teachers テーブルに複数件の教員情報を一括登録
+INSERT INTO Teachers (FirstName, LastName, Specialty, HireDate, UpdateUser)
+VALUES
+    (N'ジョン', N'スミス', N'英語', '2020-09-01', N'System'),
+    (N'メアリー', N'ブラウン', N'生物学', '2021-04-10', N'System');
+`
+        };
+
+        function downloadUserAnswers(level) {
+            let combinedUserAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'beginner_school') {
+                filename = `sql_test_school_beginner_my_answers_${timestamp}.sql`;
+                combinedUserAnswers += `-- SQLテスト - 初級編 (学校データベース - 記述回答) ${new Date().toLocaleString()}\n\n`;
+                combinedUserAnswers += `-- 問題 1.1\n` + document.getElementById('q1_1_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 1.2\n` + document.getElementById('q1_2_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 1.3\n` + document.getElementById('q1_3_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 1.4\n` + document.getElementById('q1_4_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 1.5\n` + document.getElementById('q1_5_input').value.trim() + '\n\n';
+                combinedUserAnswers += `-- 問題 1.6\n` + document.getElementById('q1_6_input').value.trim() + '\n';
+            }
+
+            const headerLength = (`-- SQLテスト - 初級編 (学校データベース - 記述回答) `.length + new Date().toLocaleString().length + 2);
+            if (combinedUserAnswers.trim().length <= headerLength) {
+                alert('回答が記述されていません。');
+                return;
+            }
+
+            const blob = new Blob([combinedUserAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadModelAnswers(level) {
+            let combinedAnswers = '';
+            let filename = '';
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+
+            if (level === 'beginner_school') {
+                filename = `sql_test_school_beginner_model_answers_${timestamp}.sql`;
+                combinedAnswers += `-- SQLテスト - 初級編 (学校データベース - 模範回答) ${new Date().toLocaleString()}\n\n`;
+                combinedAnswers += modelAnswers_beginner_school.q1_1 + '\n---\n';
+                combinedAnswers += modelAnswers_beginner_school.q1_2 + '\n---\n';
+                combinedAnswers += modelAnswers_beginner_school.q1_3 + '\n---\n';
+                combinedAnswers += modelAnswers_beginner_school.q1_4 + '\n---\n';
+                combinedAnswers += modelAnswers_beginner_school.q1_5 + '\n---\n';
+                combinedAnswers += modelAnswers_beginner_school.q1_6 + '\n';
+            }
+
+            const blob = new Blob([combinedAnswers.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        function downloadTestData() {
+            const testDataSql = `
+-- テストデータ投入用SQLスクリプト (初級編 - 学校データベース)
+-- 注意: 既にデータが存在する場合は重複する可能性があります。
+-- 必要に応じて TRUNCATE TABLE または DELETE FROM で既存データをクリアしてください。
+
+-- 既存テーブルの削除（依存関係に注意）
+IF OBJECT_ID('Students', 'U') IS NOT NULL DROP TABLE Students;
+IF OBJECT_ID('Courses', 'U') IS NOT NULL DROP TABLE Courses;
+IF OBJECT_ID('Teachers', 'U') IS NOT NULL DROP TABLE Teachers;
+
+-- Students テーブル作成
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    EnrollmentDate DATE,
+    Grade INT,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Courses テーブル作成
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY IDENTITY(1,1),
+    CourseName NVARCHAR(100) NOT NULL,
+    Credits INT,
+    Department NVARCHAR(50),
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+-- Teachers テーブル作成
+CREATE TABLE Teachers (
+    TeacherID INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    Specialty NVARCHAR(100),
+    HireDate DATE,
+    Enabled BIT DEFAULT 1,
+    InsertDate DATETIME DEFAULT GETDATE(),
+    UpdateDate DATETIME DEFAULT GETDATE(),
+    DeleteDate DATETIME,
+    UpdateUser NVARCHAR(50)
+);
+
+PRINT N'-- 初級編テストデータ挿入開始 (学校データベース) --';
+
+-- Students データ
+SET IDENTITY_INSERT Students ON;
+INSERT INTO Students (StudentID, FirstName, LastName, DateOfBirth, EnrollmentDate, Grade, Enabled, UpdateUser) VALUES
+(1, N'山田', N'太郎', '2008-07-20', '2021-04-01', 9, 1, N'Loader'),
+(2, N'鈴木', N'一郎', '2009-03-10', '2022-04-01', 8, 1, N'Loader'),
+(3, N'佐藤', N'美咲', '2007-11-05', '2020-04-01', 10, 1, N'Loader'),
+(4, N'高橋', N'健太', '2008-09-25', '2021-04-01', 9, 1, N'Loader'),
+(5, N'伊藤', N'さくら', '2009-01-01', '2022-04-01', 8, 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Students OFF;
+
+-- Courses データ
+SET IDENTITY_INSERT Courses ON;
+INSERT INTO Courses (CourseID, CourseName, Credits, Department, Enabled, UpdateUser) VALUES
+(1, N'国語I', 4, N'人文科学', 1, N'Loader'),
+(2, N'数学A', 3, N'理数系', 1, N'Loader'),
+(3, N'英語コミュニケーション', 2, N'人文科学', 1, N'Loader'),
+(4, N'物理基礎', 3, N'理数系', 1, N'Loader'),
+(5, N'日本史B', 4, N'社会科学', 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Courses OFF;
+
+-- Teachers データ
+SET IDENTITY_INSERT Teachers ON;
+INSERT INTO Teachers (TeacherID, FirstName, LastName, Specialty, HireDate, Enabled, UpdateUser) VALUES
+(1, N'田中', N'啓太', N'国語', '2018-04-01', 1, N'Loader'),
+(2, N'中村', N'由美', N'理科', '2019-09-01', 1, N'Loader'),
+(3, N'小林', N'大輔', N'社会', '2022-04-01', 1, N'Loader'),
+(4, N'吉田', N'彩香', N'体育', '2020-04-01', 0, N'Loader'); -- 論理削除済み
+SET IDENTITY_INSERT Teachers OFF;
+
+PRINT N'-- 初級編テストデータ挿入完了 (学校データベース) --';
+            `;
+
+            const blob = new Blob([testDataSql.trim()], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sql_test_school_beginner_data_setup_${timestamp}.sql`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+
+@code {
+
+}

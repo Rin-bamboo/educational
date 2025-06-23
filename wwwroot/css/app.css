@@ -1,0 +1,401 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+h1, h2, h3 {
+    color: #0056b3;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff; /* Bootstrap primary blue */
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+}
+
+h2 {
+    color: #28a745; /* Bootstrap success green */
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+h3 {
+    color: #17a2b8; /* Bootstrap info cyan */
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    background-color: #e0e0e0;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .tab-button.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+.tab-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: none; /* 初期状態では非表示 */
+}
+
+    .tab-content.active {
+        display: block; /* アクティブなタブのみ表示 */
+    }
+
+section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+    section:last-of-type {
+        border-bottom: none;
+    }
+
+ul {
+    list-style-type: disc;
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+ol {
+    list-style-type: decimal;
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+code {
+    background-color: #e0f2f7; /* Light blue background for inline code */
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    color: #c7254e;
+}
+
+pre {
+    background-color: #f0f8ff; /* AliceBlue for code blocks */
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin-top: 15px;
+    border: 1px solid #cce5ff;
+}
+
+.note {
+    background-color: #d1ecf1; /* Light cyan */
+    border-left: 5px solid #17a2b8;
+    padding: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    color: #0c5460;
+}
+
+.example-code {
+    background-color: #e3fde7; /* Light yellow for example */
+    border-left: 5px solid #3dfa24; /* Orange-yellow */
+    padding: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    color: #856404;
+}
+
+.warning {
+    background-color: #fff3cd; /* Light yellow */
+    border-left: 5px solid #ffc107; /* Orange-yellow */
+    padding: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    color: #664d03;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.question {
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #fcfcfc;
+}
+
+    .question strong {
+        color: #333;
+    }
+
+.answer-area {
+    background-color: #e0eaff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-style: italic;
+    color: #004085;
+}
+
+.table-definition {
+    background-color: #f0f8ff;
+    padding: 15px;
+    border-left: 5px solid #007bff;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+textarea.user-input {
+    width: calc(100% - 20px);
+    height: 80px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.download-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+    .download-button:hover {
+        background-color: #0056b3;
+    }
+
+.test-data-button {
+    background-color: #ff8c00;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+    .test-data-button:hover {
+        background-color: #cc7000;
+    }
+
+.show-all-answers-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+    .show-all-answers-button:hover {
+        background-color: #218838;
+    }
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* レスポンシブ対応 */
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h2 {
+        color: #34495e;
+        font-size: 1.6em;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    .card ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 15px;
+    }
+
+        .card ul li {
+            margin-bottom: 10px;
+        }
+
+            .card ul li a {
+                text-decoration: none;
+                color: #2980b9;
+                font-size: 1.05em;
+                display: block;
+                padding: 5px 0;
+                transition: color 0.3s ease;
+            }
+
+                .card ul li a:hover {
+                    color: #1f618d;
+                    text-decoration: underline;
+                }
+
+    .card .description {
+        font-size: 0.85em;
+        color: #777;
+        margin-top: 3px;
+        margin-left: 10px;
+        display: block;
+    }
+
+.call-to-action {
+    text-align: center;
+    margin-top: 40px;
+}
+
+    .call-to-action a {
+        display: inline-block;
+        background-color: #28a745;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 1.1em;
+        transition: background-color 0.3s ease;
+    }
+
+        .call-to-action a:hover {
+            background-color: #218838;
+        }
+
+textarea.answer-output {
+    width: calc(100% - 20px);
+    height: 250px; /* 全体出力用は高めに */
+    padding: 10px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    background-color: #eaf6ff;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    resize: vertical;
+    color: #0056b3;
+    margin-top: 10px;
+}
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #777;
+    font-size: 0.9em;
+}
+
+.loading-progress {
+    position: relative;
+    display: block;
+    width: 8rem;
+    height: 8rem;
+    margin: 20vh auto 1rem auto;
+}
+
+    .loading-progress circle {
+        fill: none;
+        stroke: #e0e0e0;
+        stroke-width: 0.6rem;
+        transform-origin: 50% 50%;
+        transform: rotate(-90deg);
+    }
+
+        .loading-progress circle:last-child {
+            stroke: #1b6ec2;
+            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+            transition: stroke-dasharray 0.05s ease-in-out;
+        }
+
+.loading-progress-text {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+}
+
+    .loading-progress-text:after {
+        content: var(--blazor-load-percentage-text, "Loading");
+    }

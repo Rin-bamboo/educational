@@ -1,0 +1,209 @@
+﻿@page "/Git/IntroGit"
+<h1>Git入門：バージョン管理の基本</h1>
+
+<p>この資料では、ソフトウェア開発で広く使われているバージョン管理システムである<strong>Git</strong>の基本的な使い方を学びます。</p>
+<p>Gitを使うことで、コードの変更履歴を効率的に管理し、チームでの開発をスムーズに進めることができます。</p>
+
+<hr>
+
+<h2>Gitとは？</h2>
+<p><strong>Git</strong>は、Linus Torvalds氏（Linuxの開発者）によって開発された、<strong>分散型バージョン管理システム</strong>です。</p>
+<ul>
+    <li><strong>バージョン管理:</strong> ファイルの変更履歴を記録し、いつでも過去の状態に戻せるようにします。</li>
+    <li><strong>分散型:</strong> 各開発者がコードの完全な履歴をローカルに持っています。これにより、オフラインでの作業や、中央サーバーに障害が発生した場合でも作業を継続できます。</li>
+    <li><strong>効率性:</strong> 大規模なプロジェクトや高速な変更にも対応できるよう設計されています。</li>
+</ul>
+
+<hr>
+
+<h2>Gitを始める前に：インストール</h2>
+<p>Gitを使用するには、まずお使いのコンピュータにGitをインストールする必要があります。</p>
+<ul>
+    <li><strong>Windows:</strong> <a href="https://git-scm.com/download/win" target="_blank">Git for Windows</a>からインストーラーをダウンロードして実行します。</li>
+    <li><strong>macOS:</strong> 多くの場合はXcode Command Line Toolsに含まれています。ターミナルで <code>git --version</code> を実行して確認できます。もしインストールされていなければ、<code>xcode-select --install</code> でインストールできます。また、<a href="https://git-scm.com/download/mac" target="_blank">Homebrew</a> (<code>brew install git</code>) や公式インストーラーも利用できます。</li>
+    <li><strong>Linux:</strong> 各ディストリビューションのパッケージマネージャーを使用します。例: <code>sudo apt-get install git</code> (Debian/Ubuntu), <code>sudo yum install git</code> (Fedora/RHEL)。</li>
+</ul>
+<p>インストール後、ターミナルまたはコマンドプロンプトで以下のコマンドを実行し、バージョンが表示されれば成功です。</p>
+<pre><code>git --version</code></pre>
+
+<hr>
+
+<h2>Gitの初期設定</h2>
+<p>Gitを使い始める前に、自身の情報を設定しておきましょう。これは、コミット（変更履歴の記録）を行う際に、誰が変更したかを記録するために必要です。</p>
+<pre><code>git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"</code></pre>
+<p class="note">
+    <strong>補足:</strong> <code>--global</code> オプションは、この設定がコンピュータ上のすべてのGitリポジトリに適用されることを意味します。特定のプロジェクトだけで異なる設定を使いたい場合は、<code>--global</code> を付けずにそのプロジェクトのディレクトリ内で設定します。
+</p>
+
+<hr>
+
+<h2>基本的なGitワークフロー</h2>
+<p>Gitを使った開発の基本的な流れは以下のようになります。</p>
+<ol>
+    <li>リポジトリを作成またはクローンする</li>
+    <li>ファイルを変更する</li>
+    <li>変更をステージングする（コミットの準備）</li>
+    <li>変更をコミットする（履歴に記録）</li>
+    <li>リモートリポジトリと同期する（プッシュ/プル）</li>
+</ol>
+
+<h3>1. リポジトリの作成またはクローン</h3>
+<h4>新しいリポジトリを作成する (<code>git init</code>)</h4>
+<p>既存のフォルダをGitで管理したい場合、そのフォルダ内で以下のコマンドを実行します。</p>
+<pre><code>cd path/to/your/project
+git init</code></pre>
+<p>これにより、プロジェクトフォルダ内に <code>.git</code> という隠しフォルダが作成され、Gitがそのフォルダ内の変更を追跡し始めます。</p>
+
+<h4>既存のリポジトリをクローンする (<code>git clone</code>)</h4>
+<p>GitHubなどのリモートリポジトリからプロジェクトのコピーをローカルに取得する場合に使用します。</p>
+<pre><code>git clone [リモートリポジトリのURL]</code></pre>
+<p>例：</p>
+<pre><code>git clone https://github.com/ユーザー名/リポジトリ名.git</code></pre>
+<p>これにより、指定されたリポジトリ名のフォルダが作成され、その中にプロジェクトのすべてのファイルとGitの履歴がダウンロードされます。</p>
+
+<h3>2. ファイルの変更</h3>
+<p>プロジェクト内のファイルを自由に編集します。</p>
+
+<h3>3. 変更をステージングする (<code>git add</code>)</h3>
+<p>ファイルを変更したら、その変更を次のコミットに含める準備をします。この状態を「ステージングエリアに追加する」と言います。</p>
+<pre><code># 特定のファイルをステージングする
+git add filename.txt
+
+# 複数のファイルをステージングする
+git add file1.txt file2.js
+
+# すべての変更をステージングする（注意して使用）
+git add .</code></pre>
+<p class="note">
+    <code>git add .</code> は、カレントディレクトリ以下の全ての新規ファイルと変更されたファイルをステージングします。意図しないファイルまで含めないよう注意しましょう。
+</p>
+
+<h3>4. 変更をコミットする (<code>git commit</code>)</h3>
+<p>ステージングエリアにある変更を、リポジトリの履歴として正式に記録します。コミットには、その変更が何を意味するかを説明するメッセージを必ず含めます。</p>
+<pre><code>git commit -m "コミットメッセージ"</code></pre>
+<p><strong>良いコミットメッセージの例：</strong></p>
+<ul>
+    <li><code>feat: ユーザー登録機能を追加</code></li>
+    <li><code>fix: ログイン時のバグを修正</code></li>
+    <li><code>docs: README.mdを更新</code></li>
+    <li><code>refactor: コードの可読性を向上</code></li>
+</ul>
+
+<h3>5. リモートリポジトリと同期する</h3>
+<h4>ローカルの変更をリモートに送る (<code>git push</code>)</h4>
+<p>ローカルでのコミットをGitHubなどのリモートリポジトリにアップロードします。これにより、チームメンバーと変更を共有できます。</p>
+<pre><code>git push origin master</code></pre>
+<p class="note">
+    通常、初めてプッシュする際には <code>git push -u origin master</code> のように <code>-u</code> (<code>--set-upstream</code>) オプションを付けて、ローカルブランチとリモートブランチを紐付けます。2回目以降は <code>git push</code> だけでOKです。
+    <br>
+    近年では、<code>master</code> の代わりに <code>main</code> というブランチ名が使われることが多いです。ご自身のプロジェクトに合わせて置き換えてください。
+</p>
+
+<h4>リモートの変更をローカルに取り込む (<code>git pull</code>)</h4>
+<p>他のメンバーがリモートリポジトリにプッシュした変更を、自分のローカルリポジトリに取り込みます。</p>
+<pre><code>git pull origin master</code></pre>
+<p class="important">
+    <strong>重要:</strong> 作業を開始する前や、コミットをプッシュする前には、常に <code>git pull</code> を実行して最新の状態にしておくことを強く推奨します。これにより、マージコンフリクト（競合）を未然に防ぎやすくなります。
+</p>
+
+<hr>
+
+<h2>その他の便利なコマンド</h2>
+<h3>現在の状態を確認する (<code>git status</code>)</h3>
+<p>現在のリポジトリの状態（変更されたファイル、ステージング済みのファイル、追跡されていないファイルなど）を確認できます。作業の途中で頻繁に使うコマンドです。</p>
+<pre><code>git status</code></pre>
+
+<h3>変更内容を確認する (<code>git diff</code>)</h3>
+<p>ファイルの変更内容を詳細に確認できます。</p>
+<pre><code># ワークディレクトリとステージングエリアの差分
+git diff
+
+# ステージングエリアと最新コミットの差分
+git diff --staged</code></pre>
+
+<h3>コミット履歴を確認する (<code>git log</code>)</h3>
+<p>これまでのコミット履歴を一覧表示します。</p>
+<pre><code>git log
+
+# 簡潔に表示
+git log --oneline
+
+# グラフ形式で表示（ブランチの流れも分かる）
+git log --graph --oneline --all</code></pre>
+
+<h3>変更を取り消す</h3>
+<h4>ステージングを取り消す (<code>git restore --staged</code> / <code>git reset HEAD</code>)</h4>
+<p>ステージングエリアからファイルを取り除きます。ファイルの内容自体は変更されません。</p>
+<pre><code>git restore --staged filename.txt
+# または（古いバージョンでよく使われた）
+git reset HEAD filename.txt</code></pre>
+
+<h4>変更を破棄する (<code>git restore</code> / <code>git checkout</code>)</h4>
+<p>作業ディレクトリで行った変更を破棄し、最新のコミット時点の状態に戻します。<strong>この操作は元に戻せないので注意してください。</strong></p>
+<pre><code>git restore filename.txt
+# または（古いバージョンでよく使われた）
+git checkout -- filename.txt</code></pre>
+
+<p class="important">
+    <strong>注意:</strong> <code>git reset</code> や <code>git revert</code> など、さらに強力な「元に戻す」コマンドもありますが、これらは履歴を書き換えたりするため、理解せずに使うと問題を引き起こす可能性があります。特にチーム開発では慎重に使いましょう。
+</p>
+
+<hr>
+
+<h2>ブランチの基本</h2>
+<p><strong>ブランチ</strong>は、既存のコードの流れから分岐して、独立した作業を行うための機能です。これにより、メインの開発ラインを邪魔することなく、新機能開発やバグ修正を行えます。</p>
+
+<h3>ブランチの一覧表示 (<code>git branch</code>)</h3>
+<p>ローカルにあるブランチの一覧と、現在作業しているブランチ（アスタリスクで表示）を確認します。</p>
+<pre><code>git branch</code></pre>
+
+<h3>新しいブランチの作成 (<code>git branch</code>)</h3>
+<p>現在のブランチから新しいブランチを作成します。</p>
+<pre><code>git branch feature/new-feature</code></pre>
+
+<h3>ブランチの切り替え (<code>git checkout</code> / <code>git switch</code>)</h3>
+<p>作業するブランチを切り替えます。</p>
+<pre><code>git checkout feature/new-feature
+# または（新しいバージョンで推奨）
+git switch feature/new-feature</code></pre>
+<p class="note">
+    新しいブランチを作成し、すぐにそのブランチに切り替えたい場合は、<code>git checkout -b feature/new-feature</code> (または <code>git switch -c feature/new-feature</code>) とすると便利です。
+</p>
+
+<h3>ブランチの統合 (<code>git merge</code>)</h3>
+<p>別のブランチの変更を現在のブランチに統合します。</p>
+<pre><code># まず、統合したいブランチに切り替える（例：masterまたはmainブランチ）
+git switch master
+
+# その後、変更を取り込みたいブランチをマージする
+git merge feature/new-feature</code></pre>
+<p class="note">
+    マージ時に<strong>コンフリクト（競合）</strong>が発生することがあります。これは、同じファイルの同じ箇所を複数のブランチで異なる変更をした場合に起こります。その際は、手動でファイルを編集して競合を解消し、再度コミットする必要があります。
+</p>
+
+<h3>ブランチの削除 (<code>git branch -d</code>)</h3>
+<p>マージ済みのブランチを削除します。</p>
+<pre><code>git branch -d feature/new-feature</code></pre>
+<p class="note">
+    まだマージされていないブランチを強制的に削除したい場合は、<code>-D</code> オプションを使います (<code>git branch -D feature/new-feature</code>)。ただし、これは変更が失われる可能性があるため注意が必要です。
+</p>
+
+<hr>
+
+<h2>まとめ</h2>
+<p>この資料では、Gitの基本的な概念と主要なコマンドについて学びました。</p>
+<ul>
+    <li><code>git init</code> / <code>git clone</code>: リポジトリの初期化/取得</li>
+    <li><code>git add</code>: 変更のステージング</li>
+    <li><code>git commit</code>: 変更の記録</li>
+    <li><code>git push</code> / <code>git pull</code>: リモートリポジトリとの同期</li>
+    <li><code>git status</code>: 状態の確認</li>
+    <li><code>git diff</code>: 変更内容の確認</li>
+    <li><code>git log</code>: 履歴の確認</li>
+    <li><code>git branch</code> / <code>git switch</code> / <code>git merge</code>: ブランチの操作</li>
+</ul>
+<p>Gitは非常に強力なツールですが、最初は複雑に感じるかもしれません。実際に手を動かし、繰り返し練習することで、徐々に慣れていきます。GitHubやGitLabなどのサービスと連携することで、より便利にチーム開発を進められます。</p>
+@code {
+
+}

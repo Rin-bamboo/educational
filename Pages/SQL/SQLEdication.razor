@@ -1,0 +1,566 @@
+﻿@page "/SQL/SQLEdication"
+<h1>SQL Server 教育資料</h1>
+
+<div class="tabs">
+    <button class="tab-button active" onclick="openTab(event, 'Beginner')">初級編</button>
+    <button class="tab-button" onclick="openTab(event, 'Intermediate')">応用編</button>
+    <button class="tab-button" onclick="openTab(event, 'Advanced')">上級編</button>
+</div>
+
+<div id="Beginner" class="tab-content active">
+    <h2>初級編：SQL Server の基礎</h2>
+
+    <h3>1. SQL Server とは？</h3>
+    <p>SQL Serverは、Microsoftが開発・提供するリレーショナルデータベース管理システム（RDBMS）です。データの格納、管理、取得、分析を行うための強力なツールであり、エンタープライズレベルのアプリケーションから小規模なウェブサイトまで幅広く利用されています。</p>
+    <p>SQL Serverでは、T-SQL (Transact-SQL) と呼ばれるSQLの拡張言語を使用します。T-SQLは標準SQLに加えて、プログラマビリティ（変数、条件分岐、ループなど）やエラーハンドリングといった機能が強化されています。</p>
+
+    <h3>2. データベースとテーブルの概念</h3>
+    <ul>
+        <li><strong>データベース:</strong> 関連するデータの集まり。通常、アプリケーションごとに一つのデータベースを作成します。</li>
+        <li><strong>テーブル:</strong> データベース内でデータを格納する基本的な構造。行（レコード）と列（フィールド）から構成されます。</li>
+        <li><strong>行（レコード）:</strong> テーブル内の単一のデータエントリ。</li>
+        <li><strong>列（フィールド）:</strong> テーブル内の特定の種類のデータ。データ型（例: `INT`, `VARCHAR`, `DATE`）を持ちます。</li>
+    </ul>
+    <p><strong>例: <code>Customers</code> テーブル</strong></p>
+    <table>
+        <thead>
+            <tr>
+                <th>CustomerID (INT)</th>
+                <th>CustomerName (NVARCHAR(255))</th>
+                <th>ContactName (NVARCHAR(255))</th>
+                <th>City (NVARCHAR(100))</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Alfreds Futterkiste</td>
+                <td>Maria Anders</td>
+                <td>Berlin</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Ana Trujillo Emparedados y helados</td>
+                <td>Ana Trujillo</td>
+                <td>México D.F.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>3. 基本的なT-SQLコマンド</h3>
+    <h4>SELECT文：データの検索</h4>
+    <p>テーブルからデータを取得するために使用します。</p>
+    <pre><code>
+-- テーブルのすべての列とすべての行を取得
+SELECT * FROM Customers;
+
+-- 特定の列のみを取得
+SELECT CustomerName, City FROM Customers;
+
+-- 条件を指定して行を絞り込む (WHERE句)
+SELECT * FROM Customers WHERE City = N'Berlin'; -- N'...' はUnicode文字列を示す
+
+-- 複数の条件を指定 (AND, OR)
+SELECT * FROM Customers WHERE City = N'Berlin' AND CustomerID = 1;
+SELECT * FROM Customers WHERE City = N'Berlin' OR City = N'London';
+
+-- 結果のソート (ORDER BY)
+SELECT * FROM Customers ORDER BY CustomerName ASC; -- 昇順
+SELECT CustomerName, City FROM Customers ORDER BY City DESC, CustomerName ASC; -- 複数列ソート
+
+-- 特定の件数だけ取得 (TOP句)
+SELECT TOP 5 * FROM Customers; -- 先頭5件
+SELECT TOP 10 PERCENT * FROM Customers; -- 上位10%
+        </code></pre>
+
+    <h4>INSERT INTO文：データの挿入</h4>
+    <p>テーブルに新しい行を追加します。</p>
+    <pre><code>
+-- すべての列にデータを挿入 (列の順序に注意)
+INSERT INTO Customers (CustomerID, CustomerName, ContactName, City)
+VALUES (3, N'New Customer Inc.', N'John Doe', N'New York');
+
+-- 特定の列にデータを挿入 (残りはNULLまたはデフォルト値)
+INSERT INTO Customers (CustomerName, City)
+VALUES (N'Another Customer', N'Paris');
+        </code></pre>
+
+    <h4>UPDATE文：データの更新</h4>
+    <p>既存のテーブルのデータを変更します。</p>
+    <pre><code>
+-- 特定の条件に合致する行のデータを更新
+UPDATE Customers
+SET ContactName = N'Jane Smith', City = N'London'
+WHERE CustomerID = 3;
+        </code></pre>
+
+    <h4>DELETE FROM文：データの削除</h4>
+    <p>テーブルから行を削除します。</p>
+    <pre><code>
+-- 特定の条件に合致する行を削除
+DELETE FROM Customers WHERE CustomerID = 3;
+
+-- テーブルのすべての行を削除 (注意！元に戻せません)
+-- DELETE FROM Customers;
+        </code></pre>
+
+    <h4>CREATE TABLE文：テーブルの作成</h4>
+    <p>新しいテーブルを作成します。</p>
+    <pre><code>
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY, -- 主キー (NULL不可、ユニーク)
+    ProductName NVARCHAR(255) NOT NULL, -- NULL不可
+    Price DECIMAL(10, 2), -- 桁数10、小数点以下2桁
+    StockQuantity INT DEFAULT 0 -- デフォルト値
+);
+        </code></pre>
+
+    <h4>DROP TABLE文：テーブルの削除</h4>
+    <p>既存のテーブルを削除します。（データも構造も完全に削除されます）</p>
+    <pre><code>
+DROP TABLE Products;
+        </code></pre>
+    <div class="warning">
+        <strong>注意:</strong> <code>DELETE FROM</code> は行を削除しますがテーブルは残ります。<code>DROP TABLE</code> はテーブル自体を削除します。
+    </div>
+
+    <h4>ALTER TABLE文：テーブル構造の変更</h4>
+    <p>既存のテーブルに列を追加したり、変更したりします。</p>
+    <pre><code>
+-- 列の追加
+ALTER TABLE Customers
+ADD Email NVARCHAR(255);
+
+-- 列のデータ型変更 (データがある場合は注意が必要)
+ALTER TABLE Customers
+ALTER COLUMN Email VARCHAR(100) NOT NULL;
+
+-- 列の削除
+ALTER TABLE Customers
+DROP COLUMN Email;
+        </code></pre>
+</div>
+
+<div id="Intermediate" class="tab-content">
+    <h2>応用編：SQL Server でのより複雑なデータ操作</h2>
+
+    <h3>1. データのフィルタリングと集計</h3>
+    <h4>WHERE句の高度な使い方</h4>
+    <ul>
+        <li><code>LIKE</code>: 部分一致検索 (`%` は任意の文字列、`_` は任意の一文字)</li>
+        <li><code>IN</code>: リスト内のいずれかの値に一致</li>
+        <li><code>BETWEEN</code>: 範囲内の値に一致</li>
+        <li><code>IS NULL / IS NOT NULL</code>: NULL値のチェック</li>
+    </ul>
+    <pre><code>
+-- 名前に 'Al' が含まれる顧客
+SELECT * FROM Customers WHERE CustomerName LIKE N'%Al%';
+
+-- 都市が 'London' または 'Paris' の顧客
+SELECT * FROM Customers WHERE City IN (N'London', N'Paris');
+
+-- 注文日が2024年1月1日から2024年3月31日までの注文
+SELECT * FROM Orders WHERE OrderDate BETWEEN '2024-01-01' AND '2024-03-31';
+
+-- ContactNameがNULLの顧客
+SELECT * FROM Customers WHERE ContactName IS NULL;
+        </code></pre>
+
+    <h4>集計関数とGROUP BY句</h4>
+    <p><code>COUNT()</code>, <code>SUM()</code>, <code>AVG()</code>, <code>MIN()</code>, <code>MAX()</code> を使った集計。</p>
+    <pre><code>
+-- 全顧客数を取得
+SELECT COUNT(*) FROM Customers;
+
+-- 各都市ごとの顧客数をカウント (GROUP BY)
+SELECT City, COUNT(CustomerID) AS NumberOfCustomers
+FROM Customers
+GROUP BY City;
+
+-- 各都市で顧客数が2人以上のものを抽出 (HAVING)
+SELECT City, COUNT(CustomerID) AS NumberOfCustomers
+FROM Customers
+GROUP BY City
+HAVING COUNT(CustomerID) >= 2;
+        </code></pre>
+    <div class="note">
+        <strong><code>WHERE</code> と <code>HAVING</code> の違い:</strong> <code>WHERE</code> はグループ化の前に個々の行をフィルタリングし、<code>HAVING</code> はグループ化された結果をフィルタリングします。
+    </div>
+
+    <h3>2. JOIN句：複数のテーブルの結合</h3>
+    <p>SQL Serverで複数のテーブルを結合してデータを取得します。</p>
+    <p><strong>例: <code>Orders</code> テーブルと <code>Customers</code> テーブルを結合</strong></p>
+    <p>想定テーブル構造:</p>
+    <pre><code>
+-- Customersテーブル: CustomerID, CustomerName, ...
+-- Ordersテーブル: OrderID, CustomerID, OrderDate, Amount ...
+        </code></pre>
+    <pre><code>
+-- 顧客名とそれに対応する注文情報を取得 (INNER JOIN)
+-- 両方のテーブルに一致する行のみを返します。
+SELECT
+    C.CustomerName,
+    O.OrderID,
+    O.OrderDate,
+    O.Amount
+FROM
+    Customers AS C -- ASは省略可能だが、エイリアスは可読性を高める
+INNER JOIN
+    Orders AS O ON C.CustomerID = O.CustomerID;
+
+-- すべての顧客と、もしあればその注文情報を取得 (LEFT JOIN)
+-- 左側のテーブル (Customers) のすべての行と、右側のテーブル (Orders) の対応する行を返します。
+-- 右側に一致する行がない場合はNULLを返します。
+SELECT
+    C.CustomerName,
+    O.OrderID,
+    O.OrderDate
+FROM
+    Customers AS C
+LEFT JOIN
+    Orders AS O ON C.CustomerID = O.CustomerID;
+
+-- すべての注文と、もしあればその顧客情報を取得 (RIGHT JOIN)
+-- 右側のテーブル (Orders) のすべての行と、左側のテーブル (Customers) の対応する行を返します。
+-- 左側に一致する行がない場合はNULLを返します。
+SELECT
+    C.CustomerName,
+    O.OrderID,
+    O.OrderDate
+FROM
+    Customers AS C
+RIGHT JOIN
+    Orders AS O ON C.CustomerID = O.CustomerID;
+
+-- 両方のテーブルのすべての行を結合 (FULL OUTER JOIN)
+-- どちらかのテーブルに一致する行があるすべての行を返します。
+-- 一致しない場合はNULLを返します。
+SELECT
+    C.CustomerName,
+    O.OrderID,
+    O.OrderDate
+FROM
+    Customers AS C
+FULL OUTER JOIN
+    Orders AS O ON C.CustomerID = O.CustomerID;
+        </code></pre>
+
+    <h3>3. サブクエリ（副問い合わせ）</h3>
+    <p>別のSQLクエリの中にネストされたクエリです。メインクエリの結果を絞り込んだり、計算したりするために使用されます。</p>
+    <pre><code>
+-- 平均価格より高い価格の製品を取得
+SELECT ProductName, Price
+FROM Products
+WHERE Price > (SELECT AVG(Price) FROM Products);
+
+-- 注文がある顧客の名前を取得 (EXISTS句を使用)
+SELECT CustomerName
+FROM Customers AS C
+WHERE EXISTS (SELECT 1 FROM Orders AS O WHERE O.CustomerID = C.CustomerID);
+
+-- (IN句でも可だが、大量データではEXISTSの方がパフォーマンスが良い場合がある)
+-- SELECT CustomerName FROM Customers WHERE CustomerID IN (SELECT CustomerID FROM Orders);
+        </code></pre>
+</div>
+
+<div id="Advanced" class="tab-content">
+    <h2>上級編：SQL Server の高度な機能とT-SQL</h2>
+
+    <h3>1. `UPDATE FROM` 構文（複数テーブルからの更新）</h3>
+    <p>SQL Serverでは、<code>UPDATE</code> 文に <code>FROM</code> 句を追加することで、他のテーブル（またはサブクエリ）と結合しながらデータを更新できます。これは、関連するテーブルの情報に基づいて、あるテーブルの特定の列を更新したい場合に非常に強力です。</p>
+    <pre><code>
+-- 構文例
+UPDATE TargetTable
+SET TargetTable.ColumnToUpdate = SourceTable.ValueToUse
+FROM TargetTable
+[INNER JOIN|LEFT JOIN|RIGHT JOIN] SourceTable ON TargetTable.JoinColumn = SourceTable.JoinColumn
+WHERE Conditions;
+        </code></pre>
+
+    <p><strong>例1: 顧客の最終注文日を `Customers` テーブルに反映する</strong></p>
+    <p><code>Customers</code> テーブルに <code>LastOrderDate</code> 列を追加し、<code>Orders</code> テーブルから各顧客の最新の注文日を取得して更新します。</p>
+    <pre><code>
+-- CustomersテーブルにLastOrderDate列を追加 (一度だけ実行)
+-- ALTER TABLE Customers ADD LastOrderDate DATE;
+
+UPDATE C
+SET C.LastOrderDate = O.MaxOrderDate
+FROM Customers AS C
+INNER JOIN (
+    SELECT CustomerID, MAX(OrderDate) AS MaxOrderDate
+    FROM Orders
+    GROUP BY CustomerID
+) AS O ON C.CustomerID = O.CustomerID;
+        </code></pre>
+    <div class="note">
+        <strong>ポイント:</strong>
+        <ul>
+            <li>更新対象のテーブルにエイリアス（例: <code>C</code>）を付けて、<code>SET</code> 句でそのエイリアスを使用することで、どのテーブルの列を更新するのかを明確にできます。</li>
+            <li><code>INNER JOIN</code> を使用することで、注文がある顧客のみが更新されます。注文がない顧客の <code>LastOrderDate</code> は変更されません。</li>
+            <li>サブクエリで集計した結果を結合することで、複雑な条件での更新が可能です。</li>
+        </ul>
+    </div>
+
+    <p><strong>例2: 特定のカテゴリの商品価格を、そのカテゴリの推奨価格に更新する</strong></p>
+    <p><code>Products</code> テーブル（<code>ProductID</code>, <code>ProductName</code>, <code>Price</code>, <code>CategoryID</code>）と <code>Categories</code> テーブル（<code>CategoryID</code>, <code>RecommendedPrice</code>）があり、<code>Products</code> の <code>Price</code> を <code>Categories</code> の <code>RecommendedPrice</code> に基づいて更新したい場合。</p>
+    <pre><code>
+-- CategoriesテーブルにRecommendedPrice列を追加 (仮)
+-- ALTER TABLE Categories ADD RecommendedPrice DECIMAL(10,2);
+-- UPDATE Categories SET RecommendedPrice = 120.00 WHERE CategoryID = 1;
+
+UPDATE P
+SET P.Price = C.RecommendedPrice
+FROM Products AS P
+INNER JOIN Categories AS C ON P.CategoryID = C.CategoryID
+WHERE P.Price &lt; C.RecommendedPrice; -- 現在の価格が推奨価格より低い場合にのみ更新
+        </code></pre>
+
+    <h3>2. CTE (Common Table Expressions) / WITH句</h3>
+    <p>一時的な名前付きの結果セットを定義し、より読みやすく、管理しやすい複雑なクエリを作成するために使用されます。特に、複数回参照されるサブクエリや再帰クエリに有用です。</p>
+    <pre><code>
+-- 平均価格より高い製品をCTEを使って取得
+WITH AverageProductPrice AS (
+    SELECT AVG(Price) AS AvgPrice
+    FROM Products
+)
+SELECT
+    P.ProductName,
+    P.Price
+FROM
+    Products AS P
+INNER JOIN
+    AverageProductPrice AS APP ON P.Price > APP.AvgPrice; -- CTEはテーブルのように結合可能
+
+-- 複数のCTEを連結して、注文が多い顧客名を取得
+WITH CustomerOrderCounts AS (
+    SELECT CustomerID, COUNT(OrderID) AS TotalOrders
+    FROM Orders
+    GROUP BY CustomerID
+),
+HighVolumeCustomers AS (
+    SELECT CustomerID
+    FROM CustomerOrderCounts
+    WHERE TotalOrders >= 5 -- 5件以上の注文がある顧客
+)
+SELECT
+    C.CustomerName,
+    HVC.TotalOrders -- CTEから取得した列も選択可能
+FROM
+    Customers AS C
+INNER JOIN
+    HighVolumeCustomers AS HVC ON C.CustomerID = HVC.CustomerID;
+        </code></pre>
+
+    <h3>3. ウィンドウ関数</h3>
+    <p>SQL Serverで特に強力な機能の一つです。行のグループに対して計算を実行しますが、<code>GROUP BY</code>のように行をまとめたりはしません。各行に対して独立した結果を返します。ランキング、移動平均、累積合計などに使用されます。</p>
+    <p>構文: <code>関数名() OVER ([PARTITION BY 列] [ORDER BY 列 [ASC|DESC]])</code></p>
+    <ul>
+        <li><code>PARTITION BY</code>: データセットをパーティション（グループ）に分割します。</li>
+        <li><code>ORDER BY</code>: 各パーティション内で結果をソートします。</li>
+    </ul>
+    <h4>例: ランキング関数 (<code>ROW_NUMBER()</code>, <code>RANK()</code>, <code>DENSE_RANK()</code>)</h4>
+    <pre><code>
+-- ProductsテーブルにCategoryIdを追加して例示
+-- CREATE TABLE Products (ProductID INT, ProductName NVARCHAR(255), Price DECIMAL(10,2), CategoryId INT);
+-- INSERT INTO Products VALUES (1, N'ProductA', 100, 1), (2, N'ProductB', 150, 1), (3, N'ProductC', 80, 2), (4, N'ProductD', 120, 2), (5, N'ProductE', 150, 1);
+
+SELECT
+    ProductID,
+    ProductName,
+    Price,
+    CategoryId,
+    ROW_NUMBER() OVER (PARTITION BY CategoryId ORDER BY Price DESC) AS RowNumByPrice,
+    RANK() OVER (PARTITION BY CategoryId ORDER BY Price DESC) AS RankByPrice,
+    DENSE_RANK() OVER (PARTITION BY CategoryId ORDER BY Price DESC) AS DenseRankByPrice
+FROM
+    Products;
+        </code></pre>
+    <p>各関数の違い:</p>
+    <ul>
+        <li><code>ROW_NUMBER()</code>: 行にユニークな連番を割り振ります。</li>
+        <li><code>RANK()</code>: 同じ値の場合は同じランクを割り振り、次のランクはスキップされます。</li>
+        <li><code>DENSE_RANK()</code>: 同じ値の場合は同じランクを割り振り、次のランクはスキップされません。</li>
+    </ul>
+
+    <h4>例: 累積合計 (<code>SUM() OVER</code>)</h4>
+    <pre><code>
+-- OrdersテーブルにOrderDateとAmountを追加して例示
+-- CREATE TABLE Orders (OrderID INT, CustomerID INT, OrderDate DATE, Amount DECIMAL(10,2));
+-- INSERT INTO Orders VALUES (1, 1, '2025-01-01', 100), (2, 1, '2025-01-05', 150), (3, 2, '2025-01-02', 200), (4, 1, '2025-01-10', 50);
+
+SELECT
+    OrderID,
+    CustomerID,
+    OrderDate,
+    Amount,
+    SUM(Amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate) AS CumulativeAmountByCustomer
+FROM
+    Orders;
+        </code></pre>
+
+    <h3>4. ストアドプロシージャと関数 (T-SQL プログラミング)</h3>
+    <ul>
+        <li><strong>ストアドプロシージャ:</strong> データベースに保存される一連のT-SQL文です。複雑なビジネスロジックをカプセル化し、再利用性を高め、パフォーマンスを向上させることができます。引数を受け取り、結果を返すこともできます。</li>
+        <li><strong>関数:</strong> ストアドプロシージャに似ていますが、通常は単一の値を返すか、テーブルを返すことに特化しています。SQLクエリ内で直接呼び出すことができます。</li>
+    </ul>
+    <p><strong>例: ストアドプロシージャの作成と実行</strong></p>
+    <pre><code>
+-- ストアドプロシージャの作成
+CREATE PROCEDURE GetCustomerOrders
+    &commat;CustomerID INT -- 入力パラメータ
+AS
+BEGIN
+    SET NOCOUNT ON; -- 影響を受けた行数のメッセージを非表示にする
+
+    SELECT *
+    FROM Orders
+    WHERE CustomerID = &commat;CustomerID
+    ORDER BY OrderDate DESC;
+END;
+GO -- バッチの区切り (SQL Server Management Studioなどで使用)
+
+-- ストアドプロシージャの実行
+EXEC GetCustomerOrders &commat;CustomerID = 1;
+EXEC GetCustomerOrders 2; -- パラメータ名省略も可能 (順序通り)
+
+-- ストアドプロシージャの変更
+ALTER PROCEDURE GetCustomerOrders
+    &commat;CustomerID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT OrderID, OrderDate, Amount
+    FROM Orders
+    WHERE CustomerID = &commat;CustomerID;
+END;
+GO
+
+-- ストアドプロシージャの削除
+DROP PROCEDURE GetCustomerOrders;
+GO
+        </code></pre>
+
+    <p><strong>例: スカラー値関数 (ユーザー定義関数) の作成と実行</strong></p>
+    <pre><code>
+-- スカラー値関数の作成
+CREATE FUNCTION GetCustomerNameById (&commat;CustId INT)
+RETURNS NVARCHAR(255)
+AS
+BEGIN
+    DECLARE &commat;Name NVARCHAR(255);
+    SELECT &commat;Name = CustomerName FROM Customers WHERE CustomerID = &commat;CustId;
+    RETURN &commat;Name;
+END;
+GO
+
+-- 関数の実行 (SELECT文内で呼び出し)
+SELECT dbo.GetCustomerNameById(1);
+SELECT CustomerID, dbo.GetCustomerNameById(CustomerID) AS CustomerName FROM Orders;
+GO
+
+-- 関数の削除
+DROP FUNCTION GetCustomerNameById;
+GO
+        </code></pre>
+    <div class="warning">
+        <strong>注意:</strong>
+        <ul>
+            <li>SQL Serverのユーザー定義関数は、パフォーマンス上の考慮事項があるため、大量のデータ処理には注意が必要です。可能な限りインラインで展開できるCTEやビュー、あるいはストアドプロシージャの利用を検討してください。</li>
+            <li>オブジェクト名にスキーマ（例: `dbo.GetCustomerNameById` の `dbo`）を付けてアクセスするのが一般的です。</li>
+        </ul>
+    </div>
+
+    <h3>5. トランザクション制御</h3>
+    <p>データベース操作の整合性と信頼性を確保するためのメカニズムです。一連のT-SQL文を単一の論理的な作業単位として扱います。</p>
+    <ul>
+        <li><code>BEGIN TRANSACTION</code>: トランザクションを開始します。</li>
+        <li><code>COMMIT TRANSACTION</code>: トランザクション内のすべての変更をデータベースに永続的に保存します。</li>
+        <li><code>ROLLBACK TRANSACTION</code>: トランザクション内のすべての変更を取り消し、トランザクション開始前の状態に戻します。</li>
+    </ul>
+    <p><strong>ACID特性:</strong></p>
+    <ul>
+        <li><strong>Atomicity (原子性):</strong> トランザクション内のすべての操作は完全に実行されるか、全く実行されないかのどちらかです。</li>
+        <li><strong>Consistency (一貫性):</strong> トランザクションの開始時と終了時に、データベースは常に整合性のとれた状態に保たれます。</li>
+        <li><strong>Isolation (独立性):</strong> 複数のトランザクションが同時に実行されても、それぞれが互いに影響を与えず、あたかも単独で実行されているかのように見えます。</li>
+        <li><strong>Durability (永続性):</strong> コミットされたトランザクションの変更は、システム障害が発生しても失われません。</li>
+    </ul>
+    <pre><code>
+-- 例: 口座間送金
+BEGIN TRANSACTION;
+BEGIN TRY
+    -- 口座123から100引く
+    UPDATE Accounts SET Balance = Balance - 100 WHERE AccountID = 123;
+
+    -- エラーを発生させるための例 (コメントアウトを解除するとロールバックされる)
+    -- RAISERROR('テストエラー', 16, 1);
+
+    -- 口座456に100足す
+    UPDATE Accounts SET Balance = Balance + 100 WHERE AccountID = 456;
+
+    -- ここまですべて成功したらコミット
+    COMMIT TRANSACTION;
+    PRINT '送金が正常に完了しました。';
+END TRY
+BEGIN CATCH
+    -- エラーが発生したらロールバック
+    ROLLBACK TRANSACTION;
+    PRINT '送金が失敗しました。変更は取り消されました。';
+    -- エラー情報の取得 (オプション)
+    -- SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+END CATCH;
+        </code></pre>
+
+    <h3>6. インデックスとパフォーマンス最適化</h3>
+    <ul>
+        <li><strong>インデックス:</strong> テーブルの特定の列に作成されるデータ構造で、データの検索速度を向上させます。SQL Serverでは、クラスター化インデックス（テーブルの物理的なソート順を決定）と非クラスター化インデックス（ソートされたキー値のリストと、データ行へのポインタを含む）があります。</li>
+        <li><strong>主キー:</strong> 通常、テーブルの主キーには自動的にクラスター化インデックスが作成されます。</li>
+        <li><strong>注意点:</strong> インデックスは検索を高速化しますが、データの挿入、更新、削除のパフォーマンスを低下させる可能性があります。また、ディスク領域を消費します。適切なインデックス設計が重要です。</li>
+    </ul>
+    <p><strong>例: インデックスの作成</strong></p>
+    <pre><code>
+-- 非クラスター化インデックスの作成
+CREATE NONCLUSTERED INDEX IX_Customers_City ON Customers (City);
+
+-- 複数列のインデックス
+CREATE NONCLUSTERED INDEX IX_Products_Category_Price ON Products (CategoryID, Price DESC);
+
+-- ユニークインデックス (重複値を許さない)
+CREATE UNIQUE NONCLUSTERED INDEX UQ_Products_ProductName ON Products (ProductName);
+        </code></pre>
+    <ul>
+        <li><strong>実行計画 (Execution Plan):</strong> SQL Server Management Studio (SSMS) などで、SQLクエリがデータベースによってどのように実行されるかを示す計画です。これを分析することで、パフォーマンスのボトルネックを特定し、クエリやインデックスを最適化する手がかりを得られます。</li>
+        <li><strong>統計情報:</strong> SQL Serverはインデックスや列のデータ分布に関する統計情報を保持しており、クエリオプティマイザが最適な実行計画を立てるために使用します。定期的な統計情報の更新はパフォーマンス維持に重要です。</li>
+    </ul>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        // すべてのタブコンテンツを非表示にする
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            tabcontent[i].classList.remove("active");
+        }
+
+        // すべてのタブボタンの "active" クラスを削除する
+        tablinks = document.getElementsByClassName("tab-button");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+
+        // 現在のタブコンテンツを表示し、ボタンをアクティブにする
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // ページ読み込み時に最初のタブをアクティブにする
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector(".tab-button").click();
+    });
+</script>
+
+@code {
+
+}

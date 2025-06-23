@@ -1,0 +1,318 @@
+﻿@page "/VB/VBDotNet"
+        <h1>VB.NET Web Forms入門 教育資料</h1>
+        <p>この資料は、VB.NETとASP.NET Web Formsを使用してWebアプリケーションを開発するための基礎知識を提供します。Web Formsの基本的な概念から、プロジェクトの作成、コントロールの利用、イベント処理、データアクセスまでを分かりやすく解説します。</p>
+
+        <section>
+            <h2>1. ASP.NET Web Formsとは？</h2>
+            <p><strong>ASP.NET Web Forms</strong>は、Microsoftが提供するWebアプリケーションフレームワークの一部であり、デスクトップアプリケーション開発のような感覚でWebアプリケーションを構築できることを目指しています。特に、GUIツールによるドラッグ＆ドロップ操作でWebページを設計できる点が特徴です。</p>
+            <h3>特徴</h3>
+            <ul>
+                <li><strong>イベント駆動型モデル:</strong> デスクトップアプリケーションのように、ボタンクリックなどのイベントに基づいてコードを実行します。</li>
+                <li><strong>サーバーコントロール:</strong> <code>TextBox</code>、<code>Button</code>、<code>GridView</code>などのHTML要素を抽象化したコントロールを使用します。これらはサーバーサイドで処理され、最終的にHTMLとしてクライアントに送信されます。</li>
+                <li><strong>ビュー状態 (View State):</strong> サーバーサイドとクライアントサイド間でデータを自動的に保持し、ポストバック（ページの再読み込み）時にもコントロールの状態が維持されます。</li>
+                <li><strong>ポストバックモデル:</strong> ユーザーの操作がサーバーに送信され、サーバーで処理された後にページ全体が再描画されます。</li>
+                <li><strong>開発言語:</strong> VB.NET または C# を使用してサーバーサイドのコードを記述します。</li>
+            </ul>
+            <div class="note">
+                <p><strong>知っておくべきこと:</strong> ASP.NET Web Formsは現在、新しい大規模なWebアプリケーション開発ではあまり推奨されていません。MicrosoftはBlazorやASP.NET Core MVCといった、よりモダンなフレームワークに注力しています。しかし、既存のWeb Formsアプリケーションの保守や、シンプルな社内ツール開発などでは依然として活用されています。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. 開発環境の準備</h2>
+            <p>VB.NET Web Formsの開発には、Visual Studioが必要です。</p>
+            <ol>
+                <li><strong>Visual Studioのインストール:</strong>
+                    <ul>
+                        <li>Visual Studio 2019 または 2022 をインストールします。</li>
+                        <li>インストール時に「ASP.NET と Web 開発」ワークロードを選択してください。</li>
+                    </ul>
+                </li>
+                <li><strong>.NET Frameworkの確認:</strong>
+                    <ul>
+                        <li>Web Formsは主に.NET Framework上で動作します。Visual Studioのインストール時に必要な.NET Frameworkバージョンが含まれますが、特定のバージョンが必要な場合は確認してください。</li>
+                    </ul>
+                </li>
+            </ol>
+            <div class="note">
+                <p><strong>ヒント:</strong> Visual Studio Community Editionは、個人利用や小規模なチームであれば無料で利用できます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>3. Web Formsプロジェクトの作成</h2>
+            <p>Visual Studioを使って新しいWeb Formsプロジェクトを作成する手順です。</p>
+            <ol>
+                <li>Visual Studioを開き、「新しいプロジェクトの作成」を選択します。</li>
+                <li>検索ボックスに「ASP.NET Web アプリケーション (.NET Framework)」と入力し、テンプレートを選択して「次へ」をクリックします。
+                    <ul>
+                        <li>言語が<strong>Visual Basic</strong>になっていることを確認してください。</li>
+                    </ul>
+                </li>
+                <li>プロジェクト名、場所、ソリューション名を指定し、「作成」をクリックします。</li>
+                <li>「新しい ASP.NET Web アプリケーション」ダイアログが表示されたら、<strong>「空」</strong>または<strong>「Web Forms」</strong>テンプレートを選択し、「作成」をクリックします。
+                    <ul>
+                        <li>「空」を選択すると、必要なファイルだけが作成されます。</li>
+                        <li>「Web Forms」を選択すると、ナビゲーションバーやサンプルページなどが含まれた基本的なサイトが作成されます。</li>
+                    </ul>
+                </li>
+            </ol>
+            <p>プロジェクトが作成されると、Visual Studioのソリューションエクスプローラーに様々なファイルが表示されます。</p>
+            <ul>
+                <li><code>.aspx</code>: Webページのデザイン（HTMLとサーバーコントロールのマークアップ）を記述するファイルです。</li>
+                <li><code>.aspx.vb</code>: 各<code>.aspx</code>ファイルに対応するサーバーサイドのVB.NETコードを記述するファイルです（コードビハインドファイル）。</li>
+                <li><code>Web.config</code>: アプリケーション全体の構成設定（データベース接続文字列、認証設定など）を記述するファイルです。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. Webページの作成とサーバーコントロールの利用</h2>
+            <p>Web Formsの基本的な構成要素であるWebページとサーバーコントロールについて学びましょう。</p>
+            <h3>4.1. Webページの追加</h3>
+            <ol>
+                <li>ソリューションエクスプローラーでプロジェクトを右クリックし、「追加」>「新しい項目」を選択します。</li>
+                <li>「Web Forms」カテゴリから「Web Form」を選択し、ファイル名を指定して「追加」をクリックします（例: <code>Default.aspx</code>）。</li>
+            </ol>
+            <p>作成された<code>.aspx</code>ファイルを開くと、HTMLと、サーバーコントロールを配置するためのデザインビューが表示されます。</p>
+
+            <h3>4.2. サーバーコントロール</h3>
+            <p>ツールボックスからドラッグ＆ドロップでWebページに配置できるコントロールです。これらはサーバーサイドで処理され、最終的にブラウザで表示されるHTMLに変換されます。</p>
+        <pre><code class="language-html">&lt;%&commat; Page Language="VB" AutoEventWireup="false" CodeBehind="Default.aspx.vb" Inherits="MyWebApp.Default" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;はじめてのWeb Forms&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+            &lt;asp:Label ID="Label1" runat="server" Text="あなたの名前を入力してください:"&gt;&lt;/asp:Label&gt;
+            &lt;asp:TextBox ID="TextBox1" runat="server"&gt;&lt;/asp:TextBox&gt;
+            &lt;asp:Button ID="Button1" runat="server" Text="挨拶" /&gt;
+            &lt;br /&gt;
+            &lt;asp:Label ID="ResultLabel" runat="server"&gt;&lt;/asp:Label&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </code></pre>
+            <ul>
+                <li><code>&lt;%&commat; Page ... %&gt;</code>: ページディレクティブで、ページの言語、コードビハインドファイルなどを指定します。</li>
+                <li><code>runat="server"</code>: これがサーバーコントロールであることを示します。この属性がないと、ただのHTML要素として扱われます。</li>
+                <li><code>ID="..."</code>: コードビハインドファイルからコントロールを参照するための識別子です。</li>
+                <li><code>&lt;asp:Label&gt;</code>: HTMLの<code>&lt;label&gt;</code>や<code>&lt;span&gt;</code>に変換されます。</li>
+                <li><code>&lt;asp:TextBox&gt;</code>: HTMLの<code>&lt;input type="text"&gt;</code>に変換されます。</li>
+                <li><code>&lt;asp:Button&gt;</code>: HTMLの<code>&lt;input type="submit"&gt;</code>に変換されます。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. イベント処理とコードビハインド</h2>
+            <p>Web Formsでは、ユーザーの操作（ボタンクリックなど）をイベントとして捉え、それに対応するサーバーサイドのVB.NETコードを実行します。</p>
+            <h3>イベントハンドラの追加</h3>
+            <p>先ほどの<code>Default.aspx</code>の例で、ボタンがクリックされたときに名前を表示する処理を追加しましょう。</p>
+            <ol>
+                <li><code>Default.aspx</code>のデザインビューで<code>Button1</code>をダブルクリックします。</li>
+                <li>すると、<code>Default.aspx.vb</code>ファイルが開き、<code>Button1_Click</code>というイベントハンドラが自動的に生成されます。</li>
+            </ol>
+            <pre><code class="language-vb">' Default.aspx.vb (コードビハインドファイル)
+
+Public Class Default
+    Inherits System.Web.UI.Page
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        ' ページが最初にロードされたとき（初回アクセス時）と
+        ' ポストバック（ページの再読み込み）時に実行される
+        If Not IsPostBack Then
+            ' 初回ロード時のみ実行したい処理
+            ResultLabel.Text = "" ' 初期化
+        End If
+    End Sub
+
+    Protected Sub Button1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button1.Click
+        ' Button1がクリックされたときに実行される
+        Dim userName As String = TextBox1.Text
+        If String.IsNullOrEmpty(userName) Then
+            ResultLabel.Text = "名前が入力されていません。"
+        Else
+            ResultLabel.Text = "こんにちは、" & userName & "さん！"
+        End If
+    End Sub
+
+End Class
+            </code></pre>
+            <ul>
+                <li><strong><code>Page_Load</code>イベント:</strong> ページがロードされるたびに（初回アクセス時とポストバック時）実行されます。
+                    <ul>
+                        <li><code>IsPostBack</code>プロパティは、ページが初回ロードされたのか、それともポストバックによって再ロードされたのかを判断するために使われます。初回ロード時のみ実行したい処理は<code>If Not IsPostBack Then ... End If</code>ブロック内に記述します。</li>
+                    </ul>
+                </li>
+                <li><strong><code>Button1_Click</code>イベント:</strong> <code>Button1</code>がクリックされたときに実行されます。
+                    <ul>
+                        <li>サーバーコントロールは、HTML要素とは異なり、直接そのIDで参照できます（例: <code>TextBox1.Text</code>）。</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="note">
+                <p><strong><code>Handles</code>キーワード:</strong> VB.NETでは、イベントハンドラの定義に<code>Handles</code>キーワードを使い、どのイベントを処理するかを指定します。例: <code>Handles Button1.Click</code></p>
+            </div>
+        </section>
+
+        <section>
+            <h2>6. データバインディング</h2>
+            <p>Web Formsでは、データベースや他のデータソースから取得したデータをサーバーコントロールに表示する「データバインディング」機能が豊富に用意されています。</p>
+            <h3>GridViewコントロールの利用</h3>
+            <p><code>GridView</code>コントロールは、表形式のデータを表示するための非常に強力なコントロールです。ここでは簡単な例を示します。</p>
+            <pre><code class="language-html">&lt;!-- Default.aspx --&gt;
+&lt;asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="True"&gt;&lt;/asp:GridView&gt;
+            </code></pre>
+            <pre><code class="language-vb">
+' Default.aspx.vb
+
+Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+    If Not IsPostBack Then
+        ' データを作成
+        Dim dt As New DataTable()
+        dt.Columns.Add("ID", GetType(Integer))
+        dt.Columns.Add("名前", GetType(String))
+        dt.Columns.Add("年齢", GetType(Integer))
+
+        dt.Rows.Add(1, "田中", 25)
+        dt.Rows.Add(2, "佐藤", 30)
+        dt.Rows.Add(3, "鈴木", 28)
+
+        ' GridViewにデータをバインド
+        GridView1.DataSource = dt
+        GridView1.DataBind()
+    End If
+End Sub
+            </code></pre>
+            <ul>
+                <li><code>AutoGenerateColumns="True"</code>: データソースの列に基づいて、自動的に列が生成されます。</li>
+                <li><code>DataSource</code>プロパティ: 表示するデータソース（<code>DataTable</code>, <code>List(Of T)</code>など）を設定します。</li>
+                <li><code>DataBind()</code>メソッド: 設定したデータソースをコントロールにバインドし、UIを更新します。</li>
+            </ul>
+            <div class="note">
+                <p>より高度なデータバインディングでは、<code>SqlDataSource</code>や<code>ObjectDataSource</code>などのデータソースコントロールを使用したり、カスタムテンプレート列を定義したりすることも可能です。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>7. ページ間の移動 (ナビゲーション)</h2>
+            <p>Web Formsアプリケーション内でページ間を移動する方法はいくつかあります。</p>
+            <ul>
+                <li><strong>HyperLinkコントロール:</strong> 静的なリンクを作成します。
+                    <pre><code class="language-html">&lt;asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/About.aspx" Text="会社概要ページへ"&gt;&lt;/asp:HyperLink&gt;</code></pre>
+                </li>
+                <li><strong>Response.Redirectメソッド:</strong> サーバーサイドコードからプログラム的にリダイレクトします。
+                    <pre><code class="language-vb">Protected Sub Button2_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button2.Click
+    Response.Redirect("~/Contact.aspx") ' Contact.aspxへリダイレクト
+End Sub</code></pre>
+                    <p><code>~/</code>は、アプリケーションのルートディレクトリを表します。</p>
+                </li>
+                <li><strong>Server.Transferメソッド:</strong> サーバー内でページの処理を別のページに転送します。クライアントのブラウザはURLの変更を認識しません。
+                    <pre><code class="language-vb">Protected Sub Button3_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles Button3.Click
+    Server.Transfer("~/AnotherPage.aspx")
+End Sub</code></pre>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>8. 状態管理</h2>
+            <p>Webアプリケーションはステートレス（状態を持たない）ですが、Web Formsはユーザーやセッションの状態を維持するための様々なメカニズムを提供します。</p>
+            <ul>
+                <li><strong>ビュー状態 (View State):</strong>
+                    <ul>
+                        <li>デフォルトで有効になっており、ポストバック時にサーバーコントロールの値を自動的に保持します。</li>
+                        <li>HTMLの隠しフィールド（<code>&lt;input type="hidden"&gt;</code>）としてページ内に埋め込まれます。</li>
+                        <li>非常に便利ですが、大量のデータを保存するとページのサイズが大きくなり、パフォーマンスに影響を与える可能性があります。</li>
+                    </ul>
+                </li>
+                <li><strong>セッション状態 (Session State):</strong>
+                    <ul>
+                        <li>サーバー上にユーザー固有のデータを保存します。ブラウザを閉じたり、セッションタイムアウトが発生したりするとデータは失われます。</li>
+                        <pre><code class="language-vb">Session("UserName") = TextBox1.Text ' データを保存
+Dim name As String = Session("UserName") ' データを取得</code></pre>
+                    </ul>
+                </li>
+                <li><strong>クッキー (Cookies):</strong>
+                    <ul>
+                        <li>クライアント（ブラウザ）にデータを保存します。有効期限を設定できます。</li>
+                        <pre><code class="language-vb">Response.Cookies("LastVisit").Value = DateTime.Now.ToString() ' クッキーに保存
+Response.Cookies("LastVisit").Expires = DateTime.Now.AddDays(7) ' 7日間有効
+
+Dim lastVisit As String = Request.Cookies("LastVisit")?.Value ' クッキーから取得</code></pre>
+                    </ul>
+                </li>
+                <li><strong>アプリケーション状態 (Application State):</strong>
+                    <ul>
+                        <li>アプリケーション全体で共有されるデータをサーバー上に保存します。全てのユーザーがアクセスできます。</li>
+                        <pre><code class="language-vb">Application("VisitorCount") = CInt(Application("VisitorCount")) + 1 ' データを保存
+Dim count As Integer = Application("VisitorCount") ' データを取得</code></pre>
+                        <li>通常は、アプリケーション起動時に初期化され、シャットダウン時に破棄されます。</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="warning">
+                <p><strong>セキュリティ上の注意:</strong> セッション状態やアプリケーション状態に機密性の高い情報を保存する際は、セキュリティ対策を講じる必要があります。また、クッキーに保存するデータはクライアント側で変更される可能性があるため、信頼性の低いデータとして扱うべきです。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>9. Web Formsアプリケーションのデプロイ</h2>
+            <p>開発したWeb FormsアプリケーションをWebサーバーに配置する手順です。</p>
+            <ol>
+                <li><strong>プロジェクトの発行:</strong>
+                    <ul>
+                        <li>Visual Studioでソリューションエクスプローラーからプロジェクトを右クリックし、「発行」を選択します。</li>
+                        <li>発行方法（IIS、FTP、フォルダなど）を選択し、指示に従って設定します。</li>
+                        <li>通常は「フォルダー」を選択し、任意の場所に発行すると、デプロイに必要なファイル一式が生成されます。</li>
+                    </ul>
+                </li>
+                <li><strong>IIS (Internet Information Services) への配置:</strong>
+                    <ul>
+                        <li>IISマネージャーを開き、新しいWebサイトまたは仮想ディレクトリを作成します。</li>
+                        <li>発行したフォルダのコンテンツを、IISで設定した物理パスにコピーします。</li>
+                        <li>アプリケーションプールを適切に設定し、.NET Frameworkのバージョンがアプリケーションと一致していることを確認します。</li>
+                    </ul>
+                </li>
+            </ol>
+            <div class="note">
+                <p><strong>ヒント:</strong> 小規模なアプリケーションや開発段階では、Visual Studioの「デバッグ開始」ボタン（IIS Expressを使用）で手軽に動作確認できます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>10. 次のステップへ</h2>
+            <p>この資料でWeb Formsの基本的な開発手法を学びました。さらに学習を進めるためのヒントをいくつかご紹介します。</p>
+            <ul>
+                <li><strong>データアクセス:</strong> ADO.NET (<code>SqlConnection</code>, <code>SqlCommand</code>など) を使用してデータベースと連携する方法を学びましょう。</li>
+                <li><strong>検証コントロール:</strong> <code>RequiredFieldValidator</code>, <code>RangeValidator</code>などのコントロールを使用して、フォーム入力の検証をクライアントサイドで行いましょう。</li>
+                <li><strong>マスターページ:</strong> 共通のヘッダー、フッター、ナビゲーションを持つ一貫したレイアウトを作成する方法を学びましょう。</li>
+                <li><strong>ユーザーコントロール:</strong> 再利用可能なUI部品（フォームの一部など）を作成する方法を学びましょう。</li>
+                <li><strong>セキュリティ:</strong> 認証（ログイン）と認可（アクセス権限）の実装方法を学びましょう。</li>
+                <li><strong>デバッグ:</strong> Visual Studioの強力なデバッグ機能を使いこなしましょう。</li>
+                <li><strong>ASP.NET Coreの学習:</strong> 新規開発を行う場合は、ASP.NET Core MVCやBlazorなど、よりモダンなフレームワークの学習を検討しましょう。</li>
+            </ul>
+            <div class="note">
+                <p>Web Formsは、Microsoftの.NETエコシステムにおけるWeb開発の歴史の一部であり、多くの既存システムで使われています。これらの基礎を学ぶことは、既存システムを理解し、保守する上で非常に役立ちます。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>参考資料</h2>
+            <ul>
+                <li><a href="https://learn.microsoft.com/ja-jp/aspnet/web-forms/what-is-web-forms" target="_blank">Microsoft Learn: ASP.NET Web Formsの概要</a></li>
+                <li><a href="https://learn.microsoft.com/ja-jp/aspnet/web-forms/tutorials/aspnet-45-web-forms/data-access/introduction-to-data-access" target="_blank">Microsoft Learn: ASP.NET Web Forms データアクセスチュートリアル (英語)</a></li>
+                <li>各Web Forms関連の技術ブログや書籍</li>
+            </ul>
+        </section>
+
+
+@code {
+
+}
