@@ -1,35 +1,35 @@
-﻿name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # デプロイ対象のブランチ名
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - name: Set up .NET
+    steps:
+      - name: 📥 Checkout source
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Set up .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Publish .NET project
+      - name: 📦 Publish Blazor WebAssembly project
         run: dotnet publish ./EdicationSite.csproj -c Release -o release
 
-      - name: Show publish output root
-        run: ls -l ./release/wwwroot
-
-      - name: Prepare gh-pages content
+      - name: 📁 Prepare gh-pages content
         run: |
           mkdir gh-pages
           cp -r release/wwwroot/* gh-pages/
           cp release/wwwroot/index.html gh-pages/404.html
+          echo "bambooedication.work" > gh-pages/CNAME  # ←ここを必ずこのドメインに！
           echo "" > gh-pages/.nojekyll
 
-      - name: Deploy to GitHub Pages
+      - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
