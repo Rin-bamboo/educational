@@ -10,6 +10,8 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<!-- <OutputPath>bin\Release\net8.0\publish\</OutputPath> -->
 		<!-- <StaticWebAssetBasePath>BlazorOnGitHubPages</StaticWebAssetBasePath> -->
+		<ServiceWorkerAssetsManifest>wwwroot/service-worker-assets.js</ServiceWorkerAssetsManifest>
+		<ServiceWorker>wwwroot/service-worker.js</ServiceWorker>
 	</PropertyGroup>
 
 	<ItemGroup>
