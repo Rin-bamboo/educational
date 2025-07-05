@@ -1,26 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-<!-- <OutputPath>bin\Release\net8.0\publish\</OutputPath> -->
-<!-- <StaticWebAssetBasePath>BlazorOnGitHubPages</StaticWebAssetBasePath> -->
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<!-- <OutputPath>bin\Release\net8.0\publish\</OutputPath> -->
+		<!-- <StaticWebAssetBasePath>BlazorOnGitHubPages</StaticWebAssetBasePath> -->
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="Pages\Counter.razor" />
-    <Content Remove="Pages\Home.razor" />
-    <Content Remove="Pages\Weather.razor" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="Pages\Counter.razor" />
+		<Content Remove="Pages\Home.razor" />
+		<Content Remove="Pages\Weather.razor" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.16" PrivateAssets="all" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.16" PrivateAssets="all" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+	</PropertyGroup>
 
 </Project>
