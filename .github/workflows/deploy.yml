@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+﻿name: Deploy to GitHub Pages
 
 on:
   push:
@@ -18,6 +18,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Ensure wwwroot exists
+        run: mkdir -p EdicationSite/wwwroot
+      
       - name: 📦 Publish Blazor WebAssembly project
         run: dotnet publish ./EdicationSite.csproj -c Release -o release
 
