@@ -4,12 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<!-- <OutputPath>bin\Release\net8.0\publish\</OutputPath> -->
-		<!-- <StaticWebAssetBasePath>BlazorOnGitHubPages</StaticWebAssetBasePath> -->
 		<ServiceWorkerAssetsManifest>wwwroot/service-worker-assets.js</ServiceWorkerAssetsManifest>
 		<ServiceWorker>wwwroot/service-worker.js</ServiceWorker>
 	</PropertyGroup>
@@ -24,9 +19,5 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.16" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.16" PrivateAssets="all" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-	</PropertyGroup>
 
 </Project>
