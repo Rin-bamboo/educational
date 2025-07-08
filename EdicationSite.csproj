@@ -4,7 +4,10 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+
+		<!-- PWA構成 -->
+		<ServiceWorker>wwwroot/service-worker.published.js</ServiceWorker>
+		<GenerateServiceWorkerAssetsManifest>true</GenerateServiceWorkerAssetsManifest>
 	</PropertyGroup>
 
 	<ItemGroup>
