@@ -8,7 +8,7 @@
 		<!-- PWA構成 -->
 		<ServiceWorker>wwwroot/service-worker.published.js</ServiceWorker>
 		<GenerateServiceWorkerAssetsManifest>true</GenerateServiceWorkerAssetsManifest>
-		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+		<ServiceWorkerAssetsManifest>wwwroot/service-worker-assets.js</ServiceWorkerAssetsManifest>
 
 	</PropertyGroup>
 
