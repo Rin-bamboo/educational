@@ -19,7 +19,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Ensure wwwroot exists
-        run: mkdir -p obj/Release/net8.0/wwwroot
+        run: mkdir -p obj/Release/net8.0
       
       - name: 📦 Publish Blazor WebAssembly project
         run: dotnet publish ./EdicationSite.csproj -c Release -o release
