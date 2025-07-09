@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "EdicationSite",
   "resources": {
-    "hash": "sha256-a9M+en/eijeEj/+sxRAkmPG6CWqLPVb9ALI7n/dDuTI=",
+    "hash": "sha256-+Gk8DEkhTMQSFQ9exz8NUFBdl+igxqE+urm2wY5R1Vo=",
     "jsModuleNative": {
       "dotnet.native.8.0.18.td341apd3g.js": "sha256-1QpKPnxEuRCElzcp+e3MrovJeAJkuzqKmRQay/6Aa08="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "EdicationSite.wasm": "sha256-A9MsrN+DRukOoz7BT/Ax0R6YKeJRQIbmIeDk3sCwqDw=",
+      "EdicationSite.wasm": "sha256-rU0wgo/oLIarlk5g6awnMoA6T/CfmCzVryJhmUYnbw0=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-nYCSB5m59rkcyN5fKopbte27TZLp9V0vpsQhe246jsM=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-zXcaGPhLDfKW2gpKe60MHdGj9O6vWgr5RJEAoRq1x28=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-FkD80HgagXKsQ+0yInJ2522BYaR2CdASW6dUwSFyB64=",
