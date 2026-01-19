@@ -1,0 +1,1191 @@
+﻿@page "/Git/GitBranchStrategy"
+@inject IJSRuntime JSRuntime
+
+<h1>Gitブランチ戦略：チーム開発のベストプラクティス</h1>
+
+<p>この資料では、チーム開発で効率的にGitを活用するための<strong>ブランチ戦略</strong>について学びます。</p>
+<p>適切なブランチ戦略を採用することで、複数人での開発がスムーズになり、コードの品質を保ちながら新機能の開発やバグ修正を並行して進めることができます。</p>
+
+<hr>
+
+<h2>ブランチ戦略とは？</h2>
+<p><strong>ブランチ戦略</strong>とは、Gitのブランチ機能をどのように使い分けるかを定めたルールのことです。</p>
+<p>戦略を定めることで、以下のメリットが得られます：</p>
+<ul>
+    <li>チームメンバー全員が同じルールで作業できる</li>
+    <li>本番環境に影響を与えずに開発を進められる</li>
+    <li>複数の機能開発を並行して進められる</li>
+    <li>緊急のバグ修正を迅速に対応できる</li>
+    <li>リリースのタイミングをコントロールしやすくなる</li>
+</ul>
+
+<div class="diagram-container">
+    <h3>基本的なブランチの概念</h3>
+    <div class="mermaid">
+        gitGraph
+        commit id: "初期コミット"
+        commit id: "機能A開発"
+        branch feature
+        checkout feature
+        commit id: "作業中..."
+        commit id: "完成"
+        checkout main
+        merge feature
+        commit id: "リリース"
+    </div>
+</div>
+
+<hr>
+
+<h2>代表的なブランチ戦略</h2>
+
+<h3>1. Git Flow（ジットフロー）</h3>
+<p><strong>Git Flow</strong>は、最も有名で体系的なブランチ戦略です。大規模なプロジェクトや定期リリースを行うプロジェクトに適しています。</p>
+
+<div class="diagram-container">
+    <h4>Git Flowの全体像</h4>
+    <div class="mermaid">
+        gitGraph
+        commit id: "Initial"
+        branch develop
+        checkout develop
+        commit id: "開発開始"
+
+        branch feature/login
+        checkout feature/login
+        commit id: "ログイン機能"
+        commit id: "テスト追加"
+        checkout develop
+        merge feature/login
+
+        branch feature/dashboard
+        checkout feature/dashboard
+        commit id: "ダッシュボード"
+        checkout develop
+        merge feature/dashboard
+
+        branch release/v1.0
+        checkout release/v1.0
+        commit id: "バージョン更新"
+        commit id: "バグ修正"
+
+        checkout main
+        merge release/v1.0 tag: "v1.0.0"
+
+        checkout develop
+        merge release/v1.0
+
+        checkout main
+        branch hotfix/security
+        commit id: "緊急修正"
+        checkout main
+        merge hotfix/security tag: "v1.0.1"
+
+        checkout develop
+        merge hotfix/security
+    </div>
+</div>
+
+<h4>ブランチの種類</h4>
+<div class="branch-types">
+    <div class="branch-card main-branch">
+        <h5>🔴 main (master)</h5>
+        <p>本番環境にデプロイされるコード。常に安定した状態を保つ。</p>
+    </div>
+    <div class="branch-card develop-branch">
+        <h5>🟢 develop</h5>
+        <p>開発の中心となるブランチ。次のリリースに向けた機能がここに統合される。</p>
+    </div>
+    <div class="branch-card feature-branch">
+        <h5>🔵 feature/〇〇</h5>
+        <p>新機能の開発用ブランチ。developから分岐し、完成したらdevelopにマージする。</p>
+    </div>
+    <div class="branch-card release-branch">
+        <h5>🟡 release/〇〇</h5>
+        <p>リリース準備用ブランチ。developから分岐し、テストと微調整を行う。</p>
+    </div>
+    <div class="branch-card hotfix-branch">
+        <h5>🟠 hotfix/〇〇</h5>
+        <p>緊急バグ修正用ブランチ。mainから分岐し、完成したらmainとdevelopにマージする。</p>
+    </div>
+</div>
+
+<h4>基本的なワークフロー</h4>
+<div class="diagram-container">
+    <div class="mermaid">
+        flowchart TD
+        A["developブランチ"] --> B["feature/新機能を作成"]
+        B --> C["開発作業"]
+        C --> D["コミット"]
+        D --> E{"完成?"}
+        E -->|いいえ| C
+        E -->|はい| F["developにマージ"]
+        F --> G["featureブランチ削除"]
+
+        style A fill:#90EE90
+        style B fill:#87CEEB
+        style F fill:#90EE90
+        style G fill:#FFB6C1
+    </div>
+</div>
+
+<pre><code># developブランチに切り替え
+git switch develop
+
+# 新機能開発のためのブランチを作成
+git switch -c feature/user-authentication
+
+# 開発作業を行い、コミット
+git add .
+git commit -m "feat: ユーザー認証機能を実装"
+
+# developに最新の変更を取り込む
+git switch develop
+git pull origin develop
+
+# featureブランチをdevelopにマージ
+git merge feature/user-authentication
+
+# リモートにプッシュ
+git push origin develop
+
+# 不要になったfeatureブランチを削除
+git branch -d feature/user-authentication
+git push origin --delete feature/user-authentication</code></pre>
+
+<h4>リリースの流れ</h4>
+<div class="diagram-container">
+    <div class="mermaid">
+        flowchart LR
+        A["develop"] -->|分岐| B["release/v1.2.0"]
+        B --> C["バージョン更新"]
+        C --> D["バグ修正"]
+        D --> E["main"]
+        D --> F["develop"]
+        E --> G["タグ付け v1.2.0"]
+
+        style A fill:#90EE90
+        style B fill:#FFD700
+        style E fill:#FF6B6B
+        style F fill:#90EE90
+        style G fill:#DDA0DD
+    </div>
+</div>
+
+<pre><code># developから最新の状態でreleaseブランチを作成
+git switch develop
+git pull origin develop
+git switch -c release/v1.2.0
+
+# バージョン番号の更新やバグ修正を実施
+git commit -m "chore: バージョンを1.2.0に更新"
+
+# mainにマージしてタグを付ける
+git switch main
+git merge release/v1.2.0
+git tag -a v1.2.0 -m "Release version 1.2.0"
+git push origin main --tags
+
+# developにもマージして最新の状態を保つ
+git switch develop
+git merge release/v1.2.0
+git push origin develop
+
+# releaseブランチを削除
+git branch -d release/v1.2.0</code></pre>
+
+<h4>緊急バグ修正の流れ</h4>
+<div class="diagram-container">
+    <div class="mermaid">
+        flowchart TD
+        A["main<br />(本番環境でバグ発見!)"] -->|緊急分岐| B["hotfix/critical-bug"]
+        B --> C["バグ修正"]
+        C --> D["テスト"]
+        D --> E["main"]
+        D --> F["develop"]
+        E --> G["タグ付け v1.2.1"]
+
+        style A fill:#FF6B6B
+        style B fill:#FF8C00
+        style E fill:#FF6B6B
+        style F fill:#90EE90
+        style G fill:#DDA0DD
+    </div>
+</div>
+
+<pre><code># mainから緊急修正用ブランチを作成
+git switch main
+git pull origin main
+git switch -c hotfix/critical-bug
+
+# バグを修正してコミット
+git commit -m "fix: 重大なセキュリティバグを修正"
+
+# mainにマージしてタグを付ける
+git switch main
+git merge hotfix/critical-bug
+git tag -a v1.2.1 -m "Hotfix version 1.2.1"
+git push origin main --tags
+
+# developにもマージ
+git switch develop
+git merge hotfix/critical-bug
+git push origin develop
+
+# hotfixブランチを削除
+git branch -d hotfix/critical-bug</code></pre>
+
+<p class="note">
+    <strong>メリット:</strong> 明確な役割分担、安定したリリース管理<br>
+    <strong>デメリット:</strong> ブランチが多く複雑、小規模プロジェクトには重厚すぎる
+</p>
+
+<hr>
+
+<h3>2. GitHub Flow（ギットハブフロー）</h3>
+<p><strong>GitHub Flow</strong>は、GitHubが推奨するシンプルなブランチ戦略です。継続的デプロイメント（CD）を行うプロジェクトに最適です。</p>
+
+<div class="diagram-container">
+    <h4>GitHub Flowの全体像</h4>
+    <div class="mermaid">
+        gitGraph
+        commit id: "Initial"
+        commit id: "機能A"
+
+        branch feature/search
+        checkout feature/search
+        commit id: "検索UI"
+        commit id: "検索ロジック"
+        commit id: "テスト"
+        checkout main
+        merge feature/search tag: "Deploy"
+
+        commit id: "バグ修正"
+
+        branch feature/notifications
+        checkout feature/notifications
+        commit id: "通知機能"
+        checkout main
+        merge feature/notifications tag: "Deploy"
+
+        commit id: "パフォーマンス改善"
+    </div>
+</div>
+
+<div class="diagram-container">
+    <h4>GitHub Flowのワークフロー</h4>
+    <div class="mermaid">
+        flowchart TD
+        A["main"] -->|1. ブランチ作成| B["feature/new-feature"]
+        B -->|2. 開発・コミット| C["コミットを複数回"]
+        C -->|3. プッシュ| D["GitHub"]
+        D -->|4. Pull Request作成| E["コードレビュー"]
+        E -->|5. CIテスト実行| F{"テスト合格?"}
+        F -->|いいえ| C
+        F -->|はい| G{"レビュー承認?"}
+        G -->|いいえ| C
+        G -->|はい| H["mainにマージ"]
+        H -->|6. 自動デプロイ| I["本番環境"]
+        H --> J["ブランチ削除"]
+
+        style A fill:#FF6B6B
+        style B fill:#87CEEB
+        style E fill:#FFD700
+        style H fill:#FF6B6B
+        style I fill:#90EE90
+    </div>
+</div>
+
+<h4>ブランチの種類</h4>
+<div class="branch-types">
+    <div class="branch-card main-branch">
+        <h5>🔴 main</h5>
+        <p>常にデプロイ可能な状態を保つ。mainへのマージは即座にデプロイされる前提。</p>
+    </div>
+    <div class="branch-card feature-branch">
+        <h5>🔵 feature/〇〇</h5>
+        <p>機能開発やバグ修正のためのブランチ。mainから分岐し、完成したらPull Requestを作成してmainにマージする。</p>
+    </div>
+</div>
+
+<h4>基本的なワークフロー</h4>
+<pre><code># mainから新しいブランチを作成
+git switch main
+git pull origin main
+git switch -c feature/add-search-function
+
+# 開発作業を行い、こまめにコミット
+git add .
+git commit -m "feat: 検索フォームのUIを追加"
+git commit -m "feat: 検索ロジックを実装"
+
+# リモートにプッシュ
+git push -u origin feature/add-search-function
+
+# GitHub上でPull Requestを作成
+# → チームメンバーがコードレビュー
+# → CIテストが自動実行される
+# → 承認されたらmainにマージ
+
+# マージ後、ローカルのmainを更新
+git switch main
+git pull origin main
+
+# 不要になったブランチを削除
+git branch -d feature/add-search-function
+git push origin --delete feature/add-search-function</code></pre>
+
+<h4>Pull Requestのベストプラクティス</h4>
+<div class="diagram-container">
+    <div class="mermaid">
+        flowchart LR
+        A["小さく<br />分割"] --> B["分かりやすい<br />タイトル"]
+        B --> C["詳細な<br />説明"]
+        C --> D["早期に<br />レビュー依頼"]
+
+        style A fill:#FFB6C1
+        style B fill:#87CEEB
+        style C fill:#FFD700
+        style D fill:#90EE90
+    </div>
+</div>
+
+<ul>
+    <li><strong>小さく分割する:</strong> 1つのPRは1つの機能や修正に絞る</li>
+    <li><strong>分かりやすいタイトル:</strong> <code>feat: 検索機能を追加</code> のようにプレフィックスを付ける</li>
+    <li><strong>詳細な説明:</strong> 変更の背景、テスト方法、スクリーンショットなどを記載</li>
+    <li><strong>早期にレビュー依頼:</strong> 完璧を待たず、ドラフトPRで早めにフィードバックをもらう</li>
+</ul>
+
+<p class="note">
+    <strong>メリット:</strong> シンプルで理解しやすい、継続的デプロイメントに最適<br>
+    <strong>デメリット:</strong> リリースタイミングのコントロールが難しい
+</p>
+
+<hr>
+
+<h3>3. GitLab Flow（ギットラブフロー）</h3>
+<p><strong>GitLab Flow</strong>は、Git FlowとGitHub Flowの中間的な戦略です。環境ごとのブランチを持つことで、段階的なデプロイメントを実現します。</p>
+
+<div class="diagram-container">
+    <h4>GitLab Flowの全体像</h4>
+    <div class="mermaid">
+        gitGraph
+        commit id: "Initial"
+
+        branch feature/payment
+        checkout feature/payment
+        commit id: "決済機能"
+        checkout main
+        merge feature/payment
+
+        branch staging
+        checkout staging
+        merge main
+        commit id: "ステージングテスト"
+
+        branch production
+        checkout production
+        merge main
+        commit id: "本番デプロイ"
+
+        checkout main
+        branch feature/dashboard
+        checkout feature/dashboard
+        commit id: "ダッシュボード"
+        checkout main
+        merge feature/dashboard
+
+        checkout staging
+        merge main
+
+        checkout production
+        merge main
+    </div>
+</div>
+
+<div class="diagram-container">
+    <h4>環境ごとのデプロイフロー</h4>
+    <div class="mermaid">
+        flowchart LR
+        A["開発環境<br />(main)"] -->|テスト合格| B["ステージング環境<br />(staging)"]
+        B -->|動作確認OK| C["本番環境<br />(production)"]
+
+        D["feature/<br />ブランチ"] -->|Merge Request| A
+
+        style A fill:#87CEEB
+        style B fill:#FFD700
+        style C fill:#90EE90
+        style D fill:#DDA0DD
+    </div>
+</div>
+
+<h4>ブランチの種類</h4>
+<div class="branch-types">
+    <div class="branch-card develop-branch">
+        <h5>🟢 main</h5>
+        <p>開発の中心ブランチ</p>
+    </div>
+    <div class="branch-card feature-branch">
+        <h5>🔵 feature/〇〇</h5>
+        <p>機能開発用ブランチ</p>
+    </div>
+    <div class="branch-card release-branch">
+        <h5>🟡 staging</h5>
+        <p>ステージング環境用ブランチ（オプション）</p>
+    </div>
+    <div class="branch-card main-branch">
+        <h5>🔴 production</h5>
+        <p>本番環境用ブランチ</p>
+    </div>
+</div>
+
+<h4>基本的なワークフロー</h4>
+<pre><code># mainから機能開発ブランチを作成
+git switch main
+git pull origin main
+git switch -c feature/payment-integration
+
+# 開発・コミット・プッシュ
+git add .
+git commit -m "feat: 決済機能を統合"
+git push -u origin feature/payment-integration
+
+# Merge RequestでmainにマージされたらCIで自動テスト
+
+# ステージング環境へデプロイ
+git switch staging
+git merge main
+git push origin staging
+
+# テスト完了後、本番環境へデプロイ
+git switch production
+git merge main
+git push origin production</code></pre>
+
+<p class="note">
+    <strong>メリット:</strong> 環境ごとのデプロイメント管理が明確<br>
+    <strong>デメリット:</strong> 環境が多いと管理が複雑になる
+</p>
+
+<hr>
+
+<h3>4. Trunk Based Development（トランクベース開発）</h3>
+<p><strong>Trunk Based Development</strong>は、極めてシンプルな戦略で、ほぼすべての開発をmain（trunk）ブランチで行います。</p>
+
+<div class="diagram-container">
+    <h4>Trunk Based Developmentの全体像</h4>
+    <div class="mermaid">
+        gitGraph
+        commit id: "Initial"
+        commit id: "機能A"
+
+        branch short-feature-1
+        checkout short-feature-1
+        commit id: "小さな変更"
+        checkout main
+        merge short-feature-1
+
+        commit id: "機能B"
+
+        branch short-feature-2
+        checkout short-feature-2
+        commit id: "UI調整"
+        checkout main
+        merge short-feature-2
+
+        commit id: "機能C"
+        commit id: "機能D"
+    </div>
+</div>
+
+<div class="diagram-container">
+    <h4>短命ブランチのサイクル</h4>
+    <div class="mermaid">
+        flowchart LR
+        A["main"] -->|朝| B["feature作成"]
+        B -->|数時間| C["小さな変更"]
+        C -->|夕方| D["mainにマージ"]
+        D --> A
+
+        E["フィーチャー<br />トグル"] -.->|未完成機能を隠す| C
+
+        style A fill:#FF6B6B
+        style B fill:#87CEEB
+        style C fill:#FFD700
+        style D fill:#90EE90
+        style E fill:#DDA0DD
+    </div>
+</div>
+
+<h4>特徴</h4>
+<ul>
+    <li>短命のfeatureブランチ（1〜2日以内にマージ）</li>
+    <li>頻繁な統合（1日に複数回コミット）</li>
+    <li>フィーチャートグル（機能フラグ）を使って未完成の機能を隠す</li>
+    <li>自動テストとCIが必須</li>
+</ul>
+
+<h4>基本的なワークフロー</h4>
+<pre><code># mainから短命のブランチを作成
+git switch main
+git pull origin main
+git switch -c short-lived-feature
+
+# 小さな変更を加えてすぐにコミット
+git add .
+git commit -m "feat: ボタンの配置を変更"
+git push -u origin short-lived-feature
+
+# すぐにPRを作成してマージ（数時間〜1日以内）
+# マージ後、即座にブランチを削除</code></pre>
+
+<p class="note">
+    <strong>メリット:</strong> マージコンフリクトが減少、継続的インテグレーションが容易<br>
+    <strong>デメリット:</strong> 高度な自動化とテスト体制が必要
+</p>
+
+<hr>
+
+<h2>4つの戦略の比較</h2>
+
+<div class="diagram-container">
+    <h3>複雑さとリリース頻度の関係</h3>
+    <div class="mermaid">
+        quadrantChart
+        title ブランチ戦略の選択マトリクス
+        x-axis "シンプル" --> "複雑"
+        y-axis "低頻度リリース" --> "高頻度リリース"
+        quadrant-1 "慎重派"
+        quadrant-2 "アジャイル派"
+        quadrant-3 "スタートアップ"
+        quadrant-4 "エンタープライズ"
+        GitHub Flow: [0.3, 0.7]
+        Trunk Based: [0.25, 0.85]
+        GitLab Flow: [0.6, 0.6]
+        Git Flow: [0.8, 0.3]
+    </div>
+</div>
+
+<hr>
+
+<h2>コミットメッセージの規約（Conventional Commits）</h2>
+<p>どのブランチ戦略を採用する場合でも、統一されたコミットメッセージの形式を使うことで、変更履歴が読みやすくなります。</p>
+
+<div class="diagram-container">
+    <h3>コミットメッセージの構造</h3>
+    <div class="mermaid">
+        flowchart TD
+        A["コミットメッセージ"] --> B["type"]
+        A --> C["scope (オプション)"]
+        A --> D["subject"]
+        A --> E["body (オプション)"]
+        A --> F["footer (オプション)"]
+
+        B --> B1["feat, fix, docs, etc."]
+        C --> C1["auth, cart, api, etc."]
+        D --> D1["簡潔な説明"]
+        E --> E1["詳細な説明"]
+        F --> F1["Issue番号など"]
+
+        style A fill:#FFD700
+        style B fill:#87CEEB
+        style C fill:#DDA0DD
+        style D fill:#90EE90
+        style E fill:#FFB6C1
+        style F fill:#F0E68C
+    </div>
+</div>
+
+<h3>基本フォーマット</h3>
+<pre><code>&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
+
+&lt;body&gt;
+
+&lt;footer&gt;</code></pre>
+
+<h3>typeの種類</h3>
+<div class="commit-types">
+    <div class="commit-card feat">
+        <strong>feat</strong>
+        <p>新機能の追加</p>
+    </div>
+    <div class="commit-card fix">
+        <strong>fix</strong>
+        <p>バグ修正</p>
+    </div>
+    <div class="commit-card docs">
+        <strong>docs</strong>
+        <p>ドキュメントのみの変更</p>
+    </div>
+    <div class="commit-card style">
+        <strong>style</strong>
+        <p>コードの動作に影響しない変更</p>
+    </div>
+    <div class="commit-card refactor">
+        <strong>refactor</strong>
+        <p>バグ修正や機能追加を含まないコードの変更</p>
+    </div>
+    <div class="commit-card perf">
+        <strong>perf</strong>
+        <p>パフォーマンス改善</p>
+    </div>
+    <div class="commit-card test">
+        <strong>test</strong>
+        <p>テストの追加や修正</p>
+    </div>
+    <div class="commit-card chore">
+        <strong>chore</strong>
+        <p>ビルドプロセスやツールの変更</p>
+    </div>
+</div>
+
+<h3>実例</h3>
+<pre><code>feat(auth): ソーシャルログイン機能を追加
+
+GoogleとGitHubアカウントでのログインに対応しました。
+OAuth 2.0プロトコルを使用して実装しています。
+
+Closes #123</code></pre>
+
+<pre><code>fix(cart): 合計金額の計算エラーを修正
+
+税込み価格の計算時に小数点以下の処理が正しく
+行われていなかった問題を解決しました。</code></pre>
+
+<hr>
+
+<h2>ブランチ命名規則</h2>
+<p>ブランチ名にも一貫性を持たせることで、プロジェクトの管理が容易になります。</p>
+
+<div class="diagram-container">
+    <h3>ブランチ命名のパターン</h3>
+    <div class="mermaid">
+        flowchart TD
+        A["ブランチ名"] --> B["type/"]
+        B --> C["説明"]
+
+        D["例"] --> E["feature/user-profile"]
+        D --> F["fix/login-error"]
+        D --> G["hotfix/security-patch"]
+        D --> H["release/v2.0.0"]
+        D --> I["refactor/api-layer"]
+        D --> J["docs/api-documentation"]
+
+        style A fill:#FFD700
+        style B fill:#87CEEB
+        style C fill:#90EE90
+    </div>
+</div>
+
+<h3>推奨される命名パターン</h3>
+<ul>
+    <li><code>feature/機能名</code>: 新機能開発（例: <code>feature/user-profile</code>）</li>
+    <li><code>fix/バグ名</code>: バグ修正（例: <code>fix/login-error</code>）</li>
+    <li><code>hotfix/緊急修正名</code>: 本番環境の緊急修正（例: <code>hotfix/security-patch</code>）</li>
+    <li><code>release/バージョン</code>: リリース準備（例: <code>release/v2.0.0</code>）</li>
+    <li><code>refactor/対象</code>: リファクタリング（例: <code>refactor/api-layer</code>）</li>
+    <li><code>docs/対象</code>: ドキュメント更新（例: <code>docs/api-documentation</code>）</li>
+</ul>
+
+<hr>
+
+<h2>マージ戦略</h2>
+<p>ブランチをmainに統合する際の方法にもいくつかの選択肢があります。</p>
+
+<div class="diagram-container">
+    <h3>3つのマージ方法の違い</h3>
+    <div class="mermaid">
+        gitGraph
+        commit id: "A"
+        commit id: "B"
+        branch feature
+        commit id: "C"
+        commit id: "D"
+        checkout main
+        commit id: "E"
+        merge feature id: "Merge (全履歴保持)"
+    </div>
+</div>
+
+<div class="merge-comparison">
+    <div class="merge-card">
+        <h4>1. Merge（マージ）</h4>
+        <p class="merge-visual">main ──┬──M<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─C─D─┘</p>
+        <p><strong>特徴:</strong> すべての履歴が保持される</p>
+        <p><strong>メリット:</strong> 作業履歴がそのまま残る</p>
+        <p><strong>デメリット:</strong> 履歴が複雑</p>
+    </div>
+
+    <div class="merge-card">
+        <h4>2. Squash and Merge</h4>
+        <p class="merge-visual">main ──────CD</p>
+        <p><strong>特徴:</strong> 複数コミットを1つにまとめる</p>
+        <p><strong>メリット:</strong> 履歴がシンプル</p>
+        <p><strong>デメリット:</strong> 詳細な履歴が失われる</p>
+    </div>
+
+    <div class="merge-card">
+        <h4>3. Rebase and Merge</h4>
+        <p class="merge-visual">main ──────C'─D'</p>
+        <p><strong>特徴:</strong> 直線的な履歴</p>
+        <p><strong>メリット:</strong> 読みやすい履歴</p>
+        <p><strong>デメリット:</strong> プッシュ済みには使えない</p>
+    </div>
+</div>
+
+<p class="important">
+    <strong>重要:</strong> プッシュ済みのコミットに対して <code>git rebase</code> を使うと、他の開発者に影響を与える可能性があります。自分だけが使っているブランチでのみ使用しましょう。
+</p>
+
+<hr>
+
+<h2>コンフリクト（競合）の解決</h2>
+<p>複数人で開発していると、同じファイルの同じ箇所を変更してしまい、マージ時にコンフリクトが発生することがあります。</p>
+
+<div class="diagram-container">
+    <h3>コンフリクトが発生する仕組み</h3>
+    <div class="mermaid">
+        gitGraph
+        commit id: "Initial"
+        branch feature-a
+        branch feature-b
+
+        checkout feature-a
+        commit id: "A: 同じ箇所を変更"
+
+        checkout feature-b
+        commit id: "B: 同じ箇所を変更"
+
+        checkout main
+        merge feature-a id: "Aをマージ"
+        merge feature-b id: "コンフリクト発生!" type: HIGHLIGHT
+    </div>
+</div>
+
+<div class="diagram-container">
+    <h3>コンフリクト解決の手順</h3>
+    <div class="mermaid">
+        flowchart TD
+        A["マージ実行"] --> B{"コンフリクト<br />発生?"}
+        B -->|いいえ| C["完了"]
+        B -->|はい| D["git statusで<br />確認"]
+        D --> E["ファイルを<br />手動編集"]
+        E --> F["&lt;&lt;&lt;, ===, &gt;&gt;&gt;<br />マーカーを削除"]
+        F --> G["git add"]
+        G --> H["git commit"]
+        H --> C
+
+        style A fill:#87CEEB
+        style B fill:#FFD700
+        style E fill:#FF6B6B
+        style H fill:#90EE90
+    </div>
+</div>
+
+<h3>コンフリクトが起きた場合の手順</h3>
+<pre><code># マージを試みる
+git merge feature/other-branch
+
+# コンフリクトが発生
+# Auto-merging src/app.js
+# CONFLICT (content): Merge conflict in src/app.js
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# コンフリクトしているファイルを確認
+git status
+
+# ファイルを開いて手動で修正
+# &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+# 自分の変更
+# =======
+# 相手の変更
+# &gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/other-branch
+
+# 修正後、ステージングしてコミット
+git add src/app.js
+git commit -m "merge: feature/other-branchをマージ"</code></pre>
+
+<h3>コンフリクトを防ぐためのベストプラクティス</h3>
+<div class="diagram-container">
+    <div class="mermaid">
+        flowchart LR
+        A["作業開始前に<br />pullする"] --> B["短命<br />ブランチ"]
+        B --> C["定期的に<br />mainを取り込む"]
+        C --> D["作業分担を<br />調整"]
+
+        style A fill:#90EE90
+        style B fill:#87CEEB
+        style C fill:#FFD700
+        style D fill:#FFB6C1
+    </div>
+</div>
+
+<ul>
+    <li>作業開始前に必ず最新のmainをpullする</li>
+    <li>featureブランチは短命にする（長期間放置しない）</li>
+    <li>定期的にmainの変更をfeatureブランチに取り込む</li>
+    <li>大きなリファクタリングはチームと調整してから行う</li>
+    <li>同じファイルを複数人で同時に編集しないよう作業を分担する</li>
+</ul>
+
+<hr>
+
+<h2>どのブランチ戦略を選ぶべきか？</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f0f0f0;">
+            <th>プロジェクトの特徴</th>
+            <th>推奨戦略</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>個人開発・小規模チーム（2〜3人）</td>
+            <td><strong>GitHub Flow</strong></td>
+        </tr>
+        <tr>
+            <td>継続的デプロイメント（変更があればすぐ本番反映）</td>
+            <td><strong>GitHub Flow</strong> または <strong>Trunk Based Development</strong></td>
+        </tr>
+        <tr>
+            <td>定期リリース（月1回、四半期に1回など）</td>
+            <td><strong>Git Flow</strong></td>
+        </tr>
+        <tr>
+            <td>複数環境（開発・ステージング・本番）がある</td>
+            <td><strong>GitLab Flow</strong></td>
+        </tr>
+        <tr>
+            <td>大規模チーム（10人以上）で高速開発</td>
+            <td><strong>Trunk Based Development</strong></td>
+        </tr>
+        <tr>
+            <td>オープンソースプロジェクト</td>
+            <td><strong>GitHub Flow</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>実践演習</h2>
+<p>以下の手順で、実際にGitHub Flowを体験してみましょう。</p>
+
+<div class="diagram-container">
+    <h3>演習の流れ</h3>
+    <div class="mermaid">
+        flowchart LR
+        A["ステップ1<br />ブランチ作成"] --> B["ステップ2<br />ファイル編集"]
+        B --> C["ステップ3<br />プッシュ"]
+        C --> D["ステップ4<br />PR作成"]
+        D --> E["ステップ5<br />マージ"]
+        E --> F["ステップ6<br />クリーンアップ"]
+
+        style A fill:#FFB6C1
+        style B fill:#87CEEB
+        style C fill:#FFD700
+        style D fill:#DDA0DD
+        style E fill:#90EE90
+        style F fill:#F0E68C
+    </div>
+</div>
+
+<h3>ステップ1: 新しいブランチを作成</h3>
+<pre><code>git switch main
+git pull origin main
+git switch -c feature/my-first-feature</code></pre>
+
+<h3>ステップ2: ファイルを編集してコミット</h3>
+<pre><code># ファイルを編集
+echo "新しい機能" > feature.txt
+git add feature.txt
+git commit -m "feat: 新しい機能を追加"</code></pre>
+
+<h3>ステップ3: リモートにプッシュ</h3>
+<pre><code>git push -u origin feature/my-first-feature</code></pre>
+
+<h3>ステップ4: Pull Requestを作成</h3>
+<p>GitHubのWebサイトで「Pull Request」ボタンをクリックし、変更内容を説明して作成します。</p>
+
+<h3>ステップ5: レビューとマージ</h3>
+<p>チームメンバーがコードをレビューし、問題がなければmainにマージします。</p>
+
+<h3>ステップ6: ローカルを更新してブランチを削除</h3>
+<pre><code>git switch main
+git pull origin main
+git branch -d feature/my-first-feature
+git push origin --delete feature/my-first-feature</code></pre>
+
+<hr>
+
+<h2>まとめ</h2>
+
+<div class="diagram-container">
+    <h3>ブランチ戦略の選択フローチャート</h3>
+    <div class="mermaid">
+        flowchart TD
+        A["プロジェクト開始"] --> B{"チームの<br />規模は?"}
+        B -->|1-3人| C["GitHub Flow"]
+        B -->|4-10人| D{"リリース<br />頻度は?"}
+        B -->|10人以上| E["Trunk Based<br />Development"]
+
+        D -->|毎日| C
+        D -->|週1回| F{"複数環境<br />ある?"}
+        D -->|月1回以下| G["Git Flow"]
+
+        F -->|はい| H["GitLab Flow"]
+        F -->|いいえ| C
+
+        style A fill:#FFD700
+        style C fill:#90EE90
+        style E fill:#90EE90
+        style G fill:#90EE90
+        style H fill:#90EE90
+    </div>
+</div>
+
+<p>この資料では、以下のブランチ戦略について学びました：</p>
+<ul>
+    <li><strong>Git Flow:</strong> 大規模で複雑なプロジェクト向け</li>
+    <li><strong>GitHub Flow:</strong> シンプルで継続的デプロイメント向け</li>
+    <li><strong>GitLab Flow:</strong> 複数環境の管理が必要なプロジェクト向け</li>
+    <li><strong>Trunk Based Development:</strong> 高速開発と頻繁な統合向け</li>
+</ul>
+
+<p>どの戦略を選ぶかは、チームの規模、リリース頻度、自動化のレベルなどによって異なります。最初はシンプルな<strong>GitHub Flow</strong>から始めて、プロジェクトの成長に合わせて調整していくのが良いでしょう。</p>
+
+<p class="important">
+    <strong>最も重要なこと:</strong> チーム全員が同じ戦略を理解し、守ることです。ドキュメント化し、新メンバーにも確実に共有しましょう。
+</p>
+
+<style>
+    .note {
+        background-color: #e7f3ff;
+        border-left: 4px solid #2196F3;
+        padding: 12px;
+        margin: 16px 0;
+    }
+
+    .important {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 12px;
+        margin: 16px 0;
+    }
+
+    .diagram-container {
+        background-color: #fafafa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 24px 0;
+    }
+
+        .diagram-container h3, .diagram-container h4 {
+            margin-top: 0;
+            color: #333;
+        }
+
+    pre {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 12px;
+        overflow-x: auto;
+    }
+
+    code {
+        font-family: 'Courier New', monospace;
+        background-color: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+
+    pre code {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .branch-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+    }
+
+    .branch-card {
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .main-branch {
+        background-color: #ffebee;
+        border-left: 4px solid #f44336;
+    }
+
+    .develop-branch {
+        background-color: #e8f5e9;
+        border-left: 4px solid #4caf50;
+    }
+
+    .feature-branch {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+    }
+
+    .release-branch {
+        background-color: #fff9c4;
+        border-left: 4px solid #ffc107;
+    }
+
+    .hotfix-branch {
+        background-color: #ffe0b2;
+        border-left: 4px solid #ff9800;
+    }
+
+    .branch-card h5 {
+        margin-top: 0;
+        font-size: 1.1em;
+    }
+
+    .commit-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .commit-card {
+        border-radius: 6px;
+        padding: 12px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+
+        .commit-card.feat {
+            background-color: #e3f2fd;
+        }
+
+        .commit-card.fix {
+            background-color: #ffebee;
+        }
+
+        .commit-card.docs {
+            background-color: #f3e5f5;
+        }
+
+        .commit-card.style {
+            background-color: #fce4ec;
+        }
+
+        .commit-card.refactor {
+            background-color: #fff9c4;
+        }
+
+        .commit-card.perf {
+            background-color: #e0f2f1;
+        }
+
+        .commit-card.test {
+            background-color: #e8eaf6;
+        }
+
+        .commit-card.chore {
+            background-color: #f1f8e9;
+        }
+
+    .merge-comparison {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+    }
+
+    .merge-card {
+        background-color: #fafafa;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+        .merge-card h4 {
+            margin-top: 0;
+            color: #2196f3;
+        }
+
+    .merge-visual {
+        font-family: 'Courier New', monospace;
+        background-color: #fff;
+        padding: 12px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        border: 1px solid #ddd;
+    }
+
+    table {
+        margin: 16px 0;
+    }
+
+    th {
+        font-weight: bold;
+        text-align: left;
+    }
+
+    h2 {
+        border-bottom: 2px solid #333;
+        padding-bottom: 8px;
+        margin-top: 32px;
+    }
+
+    h3 {
+        color: #2196F3;
+        margin-top: 24px;
+    }
+
+    h4 {
+        color: #666;
+        margin-top: 16px;
+    }
+</style>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                if (typeof mermaid !== 'undefined') {
+                    mermaid.initialize({
+                        startOnLoad: true,
+                        theme: 'default',
+                        gitGraph: {
+                            showBranches: true,
+                            showCommitLabel: true,
+                            mainBranchName: 'main'
+                        }
+                    });
+                    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                } else {
+                    var script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                    script.onload = function() {
+                        mermaid.initialize({
+                            startOnLoad: true,
+                            theme: 'default',
+                            gitGraph: {
+                                showBranches: true,
+                                showCommitLabel: true,
+                                mainBranchName: 'main'
+                            }
+                        });
+                        mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                    };
+                    document.head.appendChild(script);
+                }
+            ");
+        }
+    }
+}
